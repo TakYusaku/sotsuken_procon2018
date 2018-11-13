@@ -1,0 +1,5 @@
+* in 'proenv_re.py'
+makefield() -> fs = (Row,Column)
+init_setPosition(self) -> return [self._1pos,self._2pos,self._3pos,self._4pos] / self.init_pattern = [user1~4の初期番号]
+reset(self) -> [self._1pos,self._2pos,self._3pos,self._4pos]
+Observation = [[[x1,y1],[x2,y2]],[[x3,y3],[x4,y4]]]
