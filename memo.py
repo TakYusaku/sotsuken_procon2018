@@ -1,8 +1,17 @@
-import datetime
-import csv
 import requests
+import random
 
-response = requests.post('http://localhost:8000/pointcalc').text.encode('utf-8').decode().replace("\n", " ").replace("  "," ")
-iv_list = [int(i) for i in response.split()]
+index = random.sample(range(4), 4)#抽出する添字を取得
+init_order = [i+1 for i in index]
+init_pattern = [0,0,0,0]
+for i in range(4):
+    if i<2:
+        init_pattern[init_order[i]-1] = 5
+    else:
+        init_pattern[init_order[i]-1] = 6
 
-print(iv_list)
+print(init_order)
+print(init_pattern)
+
+info = {"init_pattern":init_pattern}
+response = requests.post('http://localhost:8000/start', data=info)

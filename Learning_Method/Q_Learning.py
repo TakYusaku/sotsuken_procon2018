@@ -29,23 +29,18 @@ def updateQtable(env, q_table, observation, action, reward, next_observation):
 
     return q_table
 """
-# get action (list)  # フィールド外は再計算
-def getAction(env, q_table, observation, episode, choice):
+# get action (list)  # フィールド外は再計算,重複あり(ok batting)
+def getAction_ob(env, q_table, observation, episode, friends):
     epsilon = 0.5 * (1 / (episode + 1))
     a = []
     b = False
-    n = 0
-    if choice == 0:
-        n = 0
-    elif choice == 1:
-        n = 2
     for i in range(2):
         if np.random.uniform(0, 1) > epsilon:  # e-greedy low is off
             x = np.argsort(q_table[observation[i]])[::-1]
             b = False
             c = 0
             while b!=True:
-                b, d, ms, next_pos = env.judAc(i+1+n, x[c])
+                b, d, ms, next_pos = env.judAc(friends[i], x[c])
                 c += 1
             a.append([d, ms, next_pos])
 
@@ -53,166 +48,71 @@ def getAction(env, q_table, observation, episode, choice):
             b = False
             while b!=True:
                 pa = np.random.choice([0, 1, 2, 3, 4, 5, 6, 7, 8])
-                b, d, ms, next_pos = env.judAc(i+1+n, pa)
+                b, d, ms, next_pos = env.judAc(friends[i], pa)
             a.append([d, ms, next_pos])
 
     return a  # [int, str, list]
 
-# get action (list)  # フィールド外は報酬がマイナス(罰金を与える)
-def getAction(env, q_table, observation, episode, choice):
+# get action (list)  # フィールド外は報酬がマイナス(罰金を与える) (ok out of field)
+def getAction_oof(env, q_table, observation, episode, friends):
     #epsilon = 0.5 * (1 / (episode + 1))
     epsilon = 0.5
     a = []
     b = False
-    n = 0
-    if choice == 0:
-        n = 0
-    elif choice == 1:
-        n = 2
     for i in range(2):
         if np.random.uniform(0, 1) > epsilon:  # e-greedy low is off
             x = np.argsort(q_table[observation[i]])[::-1]
-            b, d, ms, next_pos = env.judAc(i+1+n, x[0])
+            b, d, ms, next_pos = env.judAc(friends[i], x[0])
             a.append([d, ms, next_pos])
 
         else: # e-greedy low is on
             pa = np.random.choice([0, 1, 2, 3, 4, 5, 6, 7, 8])
-            b, d, ms, next_pos = env.judAc(i+1+n, pa)
+            b, d, ms, next_pos = env.judAc(friends[i], pa)
             a.append([d, ms, next_pos])
 
-    return a  # [int, str, list]
-
-# get action (list)  # フィールド外は報酬がマイナス(罰金を与える)
-def getAction(env, q_table, observation, episode, choice):
-    epsilon = 0.5 * (1 / (episode + 1))
-    a = []
-    b = False
-    n = 0
-    m = 0
-    if choice == 0:
-        n = 0
-        m = 5
-    elif choice == 1:
-        n = 2
-        m = 6
-    for i in range(2):
-        if np.random.uniform(0, 1) > epsilon:  # e-greedy low is off
-            c = 0
-            while True:
-                x = np.argsort(q_table[observation[i]])[::-1]
-                print(x[c])
-                b, d, ms, next_pos = env.judAc(i+1+n, x[c])
-                l = env.show()
-                try:
-                    if l[next_pos[0]][next_pos[1]] == m:
-                        c += 1
-                    else:
-                        a.append([d, ms, next_pos])
-                        break
-                except:
-                    a.append([d, ms, next_pos])
-                    break
-        else: # e-greedy low is on
-            pa = np.random.choice([0, 1, 2, 3, 4, 5, 6, 7, 8])
-            b, d, ms, next_pos = env.judAc(i+1+n, pa)
-            a.append([d, ms, next_pos])
     return a  # [int, str, list]
 """
-# 重複無し
-def getAction(env, q_table, observation, episode, choice):
+# 重複無し(no batting)
+def getAction(env, q_table, observation, episode,friends,type):
     epsilon = 0.5 * (1 / (episode + 1))
     a = []
     b = False
-    n = 0
-    m = 0
-    if choice == 0:
-        n = 0
-        m = 5
-    elif choice == 1:
-        n = 2
-        m = 6
     for i in range(2):
         if np.random.uniform(0, 1) > epsilon:  # e-greedy low is off
             x = np.argsort(q_table[observation[i]])[::-1]
-            b = False
-            c = 0
-            while b!=True:
-                b, d, ms, next_pos = env.judAc(i+1+n, x[c])
-                lv = env.show()
-                try:
-                    if lv[next_pos[0],next_pos[1]] == m:
-                        c += 1
-                        b = False
+            if type == "nb" or type == "ob":
+                b = False
+                c = 0
+                while b!=True:
+                    b, d, ms, next_pos = env.judAc(friends[i], x[c])
+                    if type == "nb":
+                        lv = env.show()
+                        try:
+                            if lv[next_pos[0],next_pos[1]] == 5 or lv[next_pos[0],next_pos[1]] == friends[0] or lv[next_pos[0],next_pos[1]] == friends[1]:
+                                b = False
+                            else:
+                                pass
+                        except:
+                            pass
                     else:
-                        c += 1
-                except:
+                        pass
                     c += 1
+            elif type == "oof":
+                b, d, ms, next_pos = env.judAc(friends[i], x[0])
+
             a.append([d, ms, next_pos])
+
         else: # e-greedy low is on
             b = False
             while b!=True:
                 pa = np.random.choice([0, 1, 2, 3, 4, 5, 6, 7, 8])
-                b, d, ms, next_pos = env.judAc(i+1+n, pa)
+                b, d, ms, next_pos = env.judAc(friends[i], pa)
+                if type == "oof":
+                    b = True
             a.append([d, ms, next_pos])
 
     return a  # [int, str, list]
-
-def getAction_8003(env, q_table, observation, episode, choice):
-    epsilon = 0.5 * (1 / (episode + 1))
-    a = []
-    b = False
-    n = 0
-    m = 0
-    if choice == 0:
-        n = 0
-        m = 5
-    elif choice == 1:
-        n = 2
-        m = 6
-    for i in range(2):
-        if np.random.uniform(0, 1) > epsilon:  # e-greedy low is off
-            x = np.argsort(q_table[observation[i]])[::-1]
-            b = False
-            c = 0
-            while b!=True:
-                b, d, ms, next_pos = env.judAc(i+1+n, x[c])
-                lv = env.show()
-                try:
-                    if lv[next_pos[0],next_pos[1]] == m:
-                        c += 1
-                        b = False
-                    else:
-                        c += 1
-                except:
-                    c += 1
-            a.append([d, ms, next_pos])
-        else: # e-greedy low is on
-            b = False
-            while b!=True:
-                pa = np.random.choice([0, 1, 2, 3, 4, 5, 6, 7, 8])
-                b, d, ms, next_pos = env.judAc(i+1+n, pa)
-            a.append([d, ms, next_pos])
-
-    return a  # [int, str, list]
-
-def readQtable(type):
-    fn = 'q_table_' + type + '_1026_33000.csv'
-    with open(fn, 'r') as file:
-        lst = list(csv.reader(file))
-    a = []
-    for i in range(144):
-        a.append(list(map(float,lst[i])))
-    q_table = np.array(a)
-
-    return q_table
-
-def writeQtable(type, q_table):
-    fn = 'q_table_' + type + '.csv'
-    with open(fn, 'w') as file:
-        writer = csv.writer(file, lineterminator='\n')
-        writer.writerows(q_table)
-
-
+"""
 def gA_Enemy(env, q_table, observation):
     position = env.getStatus(observation)
     a = []
@@ -226,72 +126,4 @@ def gA_Enemy(env, q_table, observation):
             c += 1
         a.append([d, ms, next_pos])
     return a
-
-"""
-# [] main processing
-if __name__ == '__main__':
-    # [] make environment
-    env = gym.make('procon18env-v0')
-    num_episode = 10
-
-    is_learned = 0 #学習終了フラグ
-    is_render = 0 #描画フラグ
-    win1 = 0
-    win2 = 0
-
-    # [] make Qtable (state,action)
-    #q_table = np.zeros((144, 9))
-
-    # read q tables from csv file
-    q_table = readQtable('QL')
-    q_table_Enemy = readQtable('MCM')
-
-
-    #learning
-    for episode in range(num_episode):
-        #initialization environments
-        observation = env.reset(episode+1) #array
-        observation_Enemy = env._observe('E')
-        terns = env.num_terns
-        row = env.Row
-        column = env.Column
-        total_reward = 0
-
-        for i in range(terns):
-            env.steps = i+1
-            # choose action (num)
-            action = getAction(env, q_table, observation, episode) # list
-            enemy_action = gA_Enemy(env, q_table_Enemy, observation_Enemy)
-
-
-        for i in range(2):
-            if action[i][2] == enemy_action[i][2]: # 移動先が被ったら停留
-                action[i][0] == 4
-                enemy_action[i][0] == 4
-
-
-            # step
-            next_observation, reward, done, _ = env.step(action, "Q")
-            next_observation_enemy = env.step(enemy_action)
-
-            # update q_table
-            q_table = updateQtable(env, q_table, observation, action, reward, next_observation)
-            total_reward += reward
-
-            observation = next_observation
-            observation_Enemy = next_observation_enemy
-
-        a = np.array([episode + 1, total_reward])
-        print(env.judVoL())
-        if env.judVoL() == "Win_1":
-            win1 += 1
-        else:
-            win2 += 1
-
-        print(episode)
-
-    # save q table
-    with open('q_table_QL.csv', 'w') as file:
-        writer = csv.writer(file, lineterminator='\n')
-        writer.writerows(q_table)
 """

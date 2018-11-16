@@ -14,14 +14,25 @@ def readQtable(type):
 
     return q_table
 
+def writeQtable(type, q_table):
+    fn = type
+    with open(fn, 'w') as file:
+        writer = csv.writer(file, lineterminator='\n')
+        writer.writerows(q_table)
+
 def readLParam(fn):
     r = []
     with open(fn, 'r') as file:
         lst = list(csv.reader(file))
-    for i in lst[0]:
-        r.append(float(i))
+    for i in range(10):
+        if i < 6:
+            r.append(float(lst[0][i]))
+        else:
+            r.append(lst[0][i])
     return r
 
+
+"""
 def Log(when,epoch,info=None):
     now = datetime.datetime.now()
     fm = now.strftime("%Y%m%d_%H%M%S")
@@ -42,7 +53,7 @@ def Log(when,epoch,info=None):
     elif when is "learning":
         m1 = "now epoch is " + str(epoch) + "\n"
         m2 =
-
+"""
 
 
 def mkCSV_reward_init(epoch):

@@ -21,8 +21,15 @@ var length=0
 var width=0
 var p=make(map[int]map[string]int)
 var pcount [5]int = [5]int{0, 0, 0, 0, 0}
+var init_pattern [4]int = [4]int{0, 0, 0, 0}
 
 func StartServer(w http.ResponseWriter, r *http.Request) {
+    r.ParseForm()
+    prov:=r.Form["init_pattern"]
+    for i:=0; i<4; i++{
+      init_pattern[i], _ =strconv.Atoi(prov[i])
+    }
+
     rand.Seed(time.Now().UnixNano())
     turn=rand.Intn(60)+60
     length=rand.Intn(4)+8
@@ -101,7 +108,16 @@ func StartServer(w http.ResponseWriter, r *http.Request) {
     }
 
 }
-
+/*
+func InitposServer(w http.ResponseWriter, r *http.Request) {
+  r.ParseForm()
+  prov:=r.Form["init_pattern"]
+  for i:=0; i<4; i++{
+    init_pattern[i], _ =strconv.Atoi(prov[i])
+  }
+  fmt.Println(init_pattern)
+}
+*/
 func MoveServer(w http.ResponseWriter, r *http.Request) {
     // fmt.Fprintf(w, "move\n") yusaku
     r.ParseForm()
@@ -133,15 +149,15 @@ func MoveServer(w http.ResponseWriter, r *http.Request) {
     }
     if 0<=tmp_px && tmp_px<length && 0<=tmp_py && tmp_py<width {
       if u==1||u==2 {
-        if user[tmp_px][tmp_py]==0 || user[tmp_px][tmp_py]==5 {
-          user[p[u]["x"]][p[u]["y"]]=5
+        if user[tmp_px][tmp_py]==0 || user[tmp_px][tmp_py]==init_pattern[u-1] {
+          user[p[u]["x"]][p[u]["y"]]=init_pattern[u-1]
         }else{
           fmt.Fprintf(w,"is_panel \n")  // ;;;
           return
         }
       }else{
-        if user[tmp_px][tmp_py]==0 || user[tmp_px][tmp_py]==6 {
-          user[p[u]["x"]][p[u]["y"]]=6
+        if user[tmp_px][tmp_py]==0 || user[tmp_px][tmp_py]==init_pattern[u-1] {
+          user[p[u]["x"]][p[u]["y"]]=init_pattern[u-1]
         }else{
           fmt.Fprintf(w,"is_panel \n")  // ;;;
           return
@@ -445,31 +461,7 @@ func fill(x int, y int,c int){
   }
 }
 */
-/*
-func InitServer(w http.ResponseWriter, r *http.Request) {
-  r.ParseForm()
-  fieldSize:=r.Form["fieldSize"]
-  initPosition:=r.Form["initPosition"]
-  PointField:=r.Form["PointField"]
-  fmt.Println(fieldSize)
-  fmt.Println(initPosition)
-  fmt.Println(PointField)
-  length=fieldSize[0]
-  width=fieldSize[1]
-  field=make([][]int,length)
-  count:=0
-  for i:=0; i<length; i++{
-    field[i]=make([]int, width)
-    for j:=0; j<width; j++ {
-      field[i][j]=PointField[count]
-      count++
-      fmt.Fprintf(w,"%d ",field[i][j])
-    }
-    fmt.Fprintf(w,"\n")
-  }
 
-}
-*/
 
 func main() {
     // http.HandleFuncにルーティングと処理する関数を登録
@@ -480,7 +472,7 @@ func main() {
     http.HandleFunc("/usrpoint", UsrpointServer)
     http.HandleFunc("/pointcalc", PointcalcServer)
     http.HandleFunc("/judgedirection", JudgeServer)
-    // http.HandleFunc("/init", InitServer)
+    // http.HandleFunc("/initpos", InitposServer)
 
     // ログ出力
     log.Printf("Start Go HTTP Server (port number is 8000,learning only)")
