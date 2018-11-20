@@ -13,5 +13,5 @@ for i in range(4):
 print(init_order)
 print(init_pattern)
 
-info = {"init_pattern":init_pattern}
+info = {"init_order":init_order}
 response = requests.post('http://localhost:8000/start', data=info)

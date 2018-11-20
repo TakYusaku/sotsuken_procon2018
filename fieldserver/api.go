@@ -21,13 +21,23 @@ var length=0
 var width=0
 var p=make(map[int]map[string]int)
 var pcount [5]int = [5]int{0, 0, 0, 0, 0}
-var init_pattern [4]int = [4]int{0, 0, 0, 0}
+var init_order [4]int = [4]int{0, 0, 0, 0}
+
+func retIndex(i int) int{
+  k:=0
+  for j:=0; j<4; j++{
+    if(init_order[j] == i){
+      k = j
+    }
+  }
+  return k+1
+}
 
 func StartServer(w http.ResponseWriter, r *http.Request) {
     r.ParseForm()
-    prov:=r.Form["init_pattern"]
+    prov:=r.Form["init_order"]
     for i:=0; i<4; i++{
-      init_pattern[i], _ =strconv.Atoi(prov[i])
+      init_order[i], _ =strconv.Atoi(prov[i])
     }
 
     rand.Seed(time.Now().UnixNano())
@@ -91,7 +101,7 @@ func StartServer(w http.ResponseWriter, r *http.Request) {
     p[4]["y"]=width-y-1
 
     for i:=1; i<5; i++{
-      user[p[i]["x"]][p[i]["y"]]=i
+      user[p[i]["x"]][p[i]["y"]]=retIndex(i)
     }
 
 /*
@@ -127,6 +137,7 @@ func MoveServer(w http.ResponseWriter, r *http.Request) {
     fmt.Println(r.FormValue("d"))
     //d:=r.FormValue("d")
     d:=strings.Split(r.FormValue("d"), "")
+    //k:=retIndex(u)
     if(d[0]=="z"){
       pcount[u]++
       return
@@ -139,8 +150,8 @@ func MoveServer(w http.ResponseWriter, r *http.Request) {
       }else if d[i]=="d"{p[u]["x"]++}
     }
     */
-    tmp_px:=p[u]["x"]
-    tmp_py:=p[u]["y"]
+    tmp_px:=p[init_order[u-1]]["x"]
+    tmp_py:=p[init_order[u-1]]["y"]
     for i:=0; i<len(d); i++{
       if d[i]=="r"{tmp_py++
       }else if d[i]=="l"{tmp_py--
@@ -149,27 +160,27 @@ func MoveServer(w http.ResponseWriter, r *http.Request) {
     }
     if 0<=tmp_px && tmp_px<length && 0<=tmp_py && tmp_py<width {
       if u==1||u==2 {
-        if user[tmp_px][tmp_py]==0 || user[tmp_px][tmp_py]==init_pattern[u-1] {
-          user[p[u]["x"]][p[u]["y"]]=init_pattern[u-1]
+        if user[tmp_px][tmp_py]==0 || user[tmp_px][tmp_py]==5 {
+          user[p[init_order[u-1]]["x"]][p[init_order[u-1]]["y"]]=5
         }else{
           fmt.Fprintf(w,"is_panel \n")  // ;;;
           return
         }
       }else{
-        if user[tmp_px][tmp_py]==0 || user[tmp_px][tmp_py]==init_pattern[u-1] {
-          user[p[u]["x"]][p[u]["y"]]=init_pattern[u-1]
+        if user[tmp_px][tmp_py]==0 || user[tmp_px][tmp_py]==6 {
+          user[p[init_order[u-1]]["x"]][p[init_order[u-1]]["y"]]=6
         }else{
           fmt.Fprintf(w,"is_panel \n")  // ;;;
           return
         }
       }
-      p[u]["x"]=tmp_px
-      p[u]["y"]=tmp_py
+      p[init_order[u-1]]["x"]=tmp_px
+      p[init_order[u-1]]["y"]=tmp_py
     }else{  // out of field
       fmt.Fprintf(w,"Error \n")  // ;;;
       return
     }
-    user[p[u]["x"]][p[u]["y"]]=u
+    user[p[init_order[u-1]]["x"]][p[init_order[u-1]]["y"]]=u
     pcount[u]++
     if(pcount[1]==pcount[2]&&pcount[2]==pcount[3]&&pcount[3]==pcount[4]){
       pcount[0]=pcount[1]
@@ -188,8 +199,9 @@ func RemoveServer(w http.ResponseWriter, r *http.Request) {
   fmt.Println(u)
   fmt.Println(r.FormValue("d"))
   d:=strings.Split(r.FormValue("d"), "")
-  tmp_px:=p[u]["x"]
-  tmp_py:=p[u]["y"]
+  //k:=retIndex(u)
+  tmp_px:=p[init_order[u-1]]["x"]
+  tmp_py:=p[init_order[u-1]]["y"]
   for i:=0; i<len(d); i++{
     if d[i]=="r"{tmp_py++
     }else if d[i]=="l"{tmp_py--
@@ -232,10 +244,10 @@ func UsrpointServer(w http.ResponseWriter, r *http.Request) {
   // fmt.Fprintf(w, "usrpoint\n") yusaku
   r.ParseForm()
   u,_:=strconv.Atoi(r.FormValue("usr"))
-  fmt.Println(p[u]["x"])
-  fmt.Println(p[u]["y"])
-  fmt.Fprintf(w,"%d ",p[u]["y"])
-  fmt.Fprintf(w,"%d",p[u]["x"])
+  fmt.Println(p[init_order[u-1]]["x"])
+  fmt.Println(p[init_order[u-1]]["y"])
+  fmt.Fprintf(w,"%d ",p[init_order[u-1]]["y"])
+  fmt.Fprintf(w,"%d",p[init_order[u-1]]["x"])
 }
 
 func myAbs(x int) int{
@@ -292,8 +304,8 @@ func JudgeServer(w http.ResponseWriter, r *http.Request) { // ;;;
     //d:=r.FormValue("d")
     d:=strings.Split(r.FormValue("d"), "")
 
-    tmp_px:=p[u]["x"]
-    tmp_py:=p[u]["y"]
+    tmp_px:=p[init_order[u-1]]["x"]
+    tmp_py:=p[init_order[u-1]]["y"]
     for i:=0; i<len(d); i++{
       if d[i]=="r"{tmp_py++
       }else if d[i]=="l"{tmp_py--
@@ -325,8 +337,8 @@ func JudgeServer(w http.ResponseWriter, r *http.Request) { // ;;;
       // p[u]["x"]=tmp_px
       // p[u]["y"]=tmp_py
     }else{  // out of field
-      fmt.Fprintf(w,"%d ",p[u]["y"])  // ;;;
-      fmt.Fprintf(w,"%d",p[u]["x"])  // ;;;
+      fmt.Fprintf(w,"%d ",p[init_order[u-1]]["y"])  // ;;;
+      fmt.Fprintf(w,"%d",p[init_order[u-1]]["x"])  // ;;;
       fmt.Fprintf(w,"\n") // ;;;
       fmt.Fprintf(w,"Error \n")  // ;;;
       return

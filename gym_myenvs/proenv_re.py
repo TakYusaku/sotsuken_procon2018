@@ -31,9 +31,9 @@ class procon18Env_re(gym.Env): #define environment
         self._4action_space = gym.spaces.Discrete(9) #行動(Action)の張る空間
         self._4reward_range = [-120.,100.] #報酬の最小値と最大値のリスト
 
-    def makeField(self,init_pattern):  # make point field . return is tuple of (Row, Column)   // verified
+    def makeField(self,init_order):  # make point field . return is tuple of (Row, Column)   // verified
         url = self.local_url + '/start'
-        info = {"init_pattern":init_pattern}
+        info = {"init_order":init_order}
         response = requests.post(url, data=info)
         f = response.text.encode('utf-8').decode().replace("\n", " ").replace("  "," ")
         iv_list = [int(i) for i in f.split()] #listing initial value
@@ -47,10 +47,10 @@ class procon18Env_re(gym.Env): #define environment
         return fs
 
     def init_setPosition(self):
-        self._1pos = self.getPosition(self.init_order[0])
-        self._2pos = self.getPosition(self.init_order[1])
-        self._3pos = self.getPosition(self.init_order[2])
-        self._4pos = self.getPosition(self.init_order[3])
+        self._1pos = self.getPosition(1)
+        self._2pos = self.getPosition(2)
+        self._3pos = self.getPosition(3)
+        self._4pos = self.getPosition(4)
         return [[self._1pos,self._2pos],[self._3pos,self._4pos]]
 
     def reset(self,port=None): # initialization of position,points and steps  (rv is array of position)
@@ -61,14 +61,8 @@ class procon18Env_re(gym.Env): #define environment
 
         index = random.sample(range(4), 4)#抽出する添字を取得
         self.init_order = [i+1 for i in index]
-        self.init_pattern = [0,0,0,0]
-        for i in range(4):
-            if i<2:
-                self.init_pattern[self.init_order[i]-1] = 5
-            else:
-                self.init_pattern[self.init_order[i]-1] = 6
 
-        fs = self.makeField(self.init_pattern)
+        fs = self.makeField(self.init_order)
 
         self._1observation_space = gym.spaces.Box( #観測値(Observation)の張る空間,環境から得られる値
             low = -16, #x軸の最値,y軸の最小値,pointsの最小値
@@ -93,27 +87,36 @@ class procon18Env_re(gym.Env): #define environment
         observation = self.init_setPosition()
         self.points = [0,0]
         self.now_terns = 0
-        return observation,[self.init_order,self.init_pattern]
+        return observation
 
     def countStep(self):
         self.now_terns += 1
 
     def step(self,action,terns,team): # processing of 1step (rv is observation,reward,done,info)
-        for i in range(2):
-            if action[i][1] == "move":
-                self.Move(self.init_order[i+team],action[i][0])
-            elif action[i][1] == "move":
-                self.Remove(self.init_order[i+team],action[i][0])
         observation = []
         if team == 0:
+            for i in range(2):
+                if action[i][1] == "move":
+                    self.Move(i+1,action[i][0])
+                elif action[i][1] == "remove":
+                    self.Remove(i+1,action[i][0])
+                elif action[i][1] == "stay":
+                    self.Move(i+1,4)
             rewards = self._get_reward_QL(action)
-            observation = [self.getPosition(self.init_order[0]),self.getPosition(self.init_order[1])]
+            observation = [self.getPosition(1),self.getPosition(2)]
         elif team == 2:
+            for i in range(2):
+                if action[i][1] == "move":
+                    self.Move(i+team+1,action[i][0])
+                elif action[i][1] == "remove":
+                    self.Remove(i+team+1,action[i][0])
+                elif action[i][1] == "stay":
+                    self.Move(i+team+1,4)
             rewards = self._get_reward_MCM(terns,action)
-            observation = [self.getPosition(self.init_order[2]),self.getPosition(self.init_order[3])]
+            observation = [self.getPosition(3),self.getPosition(4)]
 
-        self.done = self._is_done()
-        return observation, rewards, self.done
+        #self.done = self._is_done()
+        return observation, rewards#, self.done
 
     def _close(self):
         pass
@@ -122,7 +125,7 @@ class procon18Env_re(gym.Env): #define environment
         pass
 
     def _get_reward_QL(self,action): # return reward (str)  by q-learning
-        if self._is_done(): # if final
+        if self.now_terns == self.terns: # if final
             if self.judVoL() == "Win_1": #if won
                 return [10,10]
             else:
@@ -140,11 +143,11 @@ class procon18Env_re(gym.Env): #define environment
                 return [p[2],p[2]]
 
     def _get_reward_MCM(self,terns,action):
-        if self._is_done():
+        p = self.calcPoint()
+        if self.now_terns == self.terns:
             if self.judVoL() == "Win_2":
                 return [10,10]
             else:
-                p = self.calcPoint() # @
                 #if p[5] > 0: # 負けて合計ポイントが正なら
                 if p[5] > 0:
                     r = terns * 0.85 * (-1)
@@ -164,7 +167,7 @@ class procon18Env_re(gym.Env): #define environment
                 return [p[5],p[5]]
 
     def _is_done(self): #done or not (bool)
-        if self.terns == self.now_terns or self.terns > self.now_terns:
+        if self.terns == self.now_terns:
             return True
         else:
             return False
@@ -205,20 +208,20 @@ class procon18Env_re(gym.Env): #define environment
             return "Win_2"
 
     def getPosition(self, usr): #get position (array)  // verified
-        data = [
-          ('usr', usr),
-        ]
+        data = {
+          'usr': str(usr)
+        }
         url = self.local_url + '/usrpoint'
         response = requests.post(url, data=data)
         f = response.text.encode('utf-8').decode().replace("\n", " ").replace("  "," ")
         pos_array =[int(i) for i in f.split()]
         return pos_array  # [x(column), y(row)]
 
-    def judAc(self, usr, dir):   # judge Actionb   // verified
-        data = [
-          ('usr', usr),
-          ('d', self.gaStr(dir)),
-        ]
+    def judAc(self, usr, dir,observation):   # judge Actionb   // verified
+        data = {
+          'usr': str(usr),
+          'd': self.gaStr(dir)
+        }
         url = self.local_url + '/judgedirection'
         f = requests.post(url, data = data).text.encode('utf-8').decode().replace("\n", " ").replace("  "," ")
         iv_list = [i for i in f.split()]
@@ -227,24 +230,27 @@ class procon18Env_re(gym.Env): #define environment
         if iv_list[2] == "Error":
             return False, dir, "oof", il
         elif iv_list[2] == "is_panel":
-            return True, dir, "remove", il
+            if il == observation:
+                return True, 4, "stay", il
+            else:
+                return True, dir, "remove", il
         else:
             return True, dir, "move", il
 
     def Move(self, usr, dir): #move agent  // verified
-        data = [
-          ('usr', usr),
-          ('d', self.gaStr(dir)),
-        ]
+        data = {
+          'usr': str(usr),
+          'd': self.gaStr(dir)
+        }
         url = self.local_url + '/move'
         response = requests.post(url, data=data)
 
     def Remove(self, usr, dir): #remove panels  // verified
-        data = [
-         ('usr', usr),
-         ('d', self.gaStr(dir)),
-        ]
-        url = self.local_url + '/move'
+        data = {
+          'usr': str(usr),
+          'd': self.gaStr(dir)
+        }
+        url = self.local_url + '/remove'
         response = requests.post(url, data=data)
 
     # dim2 -> dim1  フィールドのマス目に番号を振る #array  // verified
@@ -265,7 +271,7 @@ class procon18Env_re(gym.Env): #define environment
         elif action == 3:
             return "l"
         elif action == 4:
-            return "s"
+            return "z"
         elif action == 5:
             return "r"
         elif action == 6:
