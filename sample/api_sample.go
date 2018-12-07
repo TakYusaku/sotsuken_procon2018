@@ -1,5 +1,4 @@
-// learning only port num is 8001
-// 高専プロコンに寄せてターン数，フィールドサイズは当日の条件からランダム
+//   vs user  これは使えるやつ  とうじつよう portnum is 8000
 package main
 
 import (
@@ -22,33 +21,11 @@ var length=0
 var width=0
 var p=make(map[int]map[string]int)
 var pcount [5]int = [5]int{0, 0, 0, 0, 0}
-var init_order [4]int = [4]int{0, 0, 0, 0}
-
-func retIndex(i int) int{
-  k:=0
-  for j:=0; j<4; j++{
-    if(init_order[j] == i){
-      k = j
-    }
-  }
-  return k+1
-}
-
-func choice(s []int) int{
-    rand.Seed(time.Now().UnixNano())
-    i := rand.Intn(len(s))
-    return s[i]
-}
 
 func StartServer(w http.ResponseWriter, r *http.Request) {
-    r.ParseForm()
-    prov:=r.Form["init_order"]
-    for i:=0; i<4; i++{
-      init_order[i], _ =strconv.Atoi(prov[i])
-    }
-
     rand.Seed(time.Now().UnixNano())
-    turn=rand.Intn(40)+40
+    turn=rand.Intn(60)+60
+    turn=15
     length=rand.Intn(4)+8
     width=rand.Intn(4)+8
     fmt.Fprintf(w,"%d\n",turn)
@@ -108,7 +85,7 @@ func StartServer(w http.ResponseWriter, r *http.Request) {
     p[4]["y"]=width-y-1
 
     for i:=1; i<5; i++{
-      user[p[i]["x"]][p[i]["y"]]=retIndex(i)
+      user[p[i]["x"]][p[i]["y"]]=i
     }
 
 /*
@@ -125,26 +102,16 @@ func StartServer(w http.ResponseWriter, r *http.Request) {
     }
 
 }
-/*
-func InitposServer(w http.ResponseWriter, r *http.Request) {
-  r.ParseForm()
-  prov:=r.Form["init_pattern"]
-  for i:=0; i<4; i++{
-    init_pattern[i], _ =strconv.Atoi(prov[i])
-  }
-  fmt.Println(init_pattern)
-}
-*/
+
 func MoveServer(w http.ResponseWriter, r *http.Request) {
     // fmt.Fprintf(w, "move\n") yusaku
     r.ParseForm()
-    //curl -X POST localhost:8001/move -d "usr=1&d=right"
+    //curl -X POST localhost:8000/move -d "usr=1&d=right"
     u,_:=strconv.Atoi(r.FormValue("usr"))
     fmt.Println(u)
     fmt.Println(r.FormValue("d"))
     //d:=r.FormValue("d")
     d:=strings.Split(r.FormValue("d"), "")
-    //k:=retIndex(u)
     if(d[0]=="z"){
       pcount[u]++
       return
@@ -157,8 +124,8 @@ func MoveServer(w http.ResponseWriter, r *http.Request) {
       }else if d[i]=="d"{p[u]["x"]++}
     }
     */
-    tmp_px:=p[init_order[u-1]]["x"]
-    tmp_py:=p[init_order[u-1]]["y"]
+    tmp_px:=p[u]["x"]
+    tmp_py:=p[u]["y"]
     for i:=0; i<len(d); i++{
       if d[i]=="r"{tmp_py++
       }else if d[i]=="l"{tmp_py--
@@ -168,26 +135,26 @@ func MoveServer(w http.ResponseWriter, r *http.Request) {
     if 0<=tmp_px && tmp_px<length && 0<=tmp_py && tmp_py<width {
       if u==1||u==2 {
         if user[tmp_px][tmp_py]==0 || user[tmp_px][tmp_py]==5 {
-          user[p[init_order[u-1]]["x"]][p[init_order[u-1]]["y"]]=5
+          user[p[u]["x"]][p[u]["y"]]=5
         }else{
           fmt.Fprintf(w,"is_panel \n")  // ;;;
           return
         }
       }else{
         if user[tmp_px][tmp_py]==0 || user[tmp_px][tmp_py]==6 {
-          user[p[init_order[u-1]]["x"]][p[init_order[u-1]]["y"]]=6
+          user[p[u]["x"]][p[u]["y"]]=6
         }else{
           fmt.Fprintf(w,"is_panel \n")  // ;;;
           return
         }
       }
-      p[init_order[u-1]]["x"]=tmp_px
-      p[init_order[u-1]]["y"]=tmp_py
+      p[u]["x"]=tmp_px
+      p[u]["y"]=tmp_py
     }else{  // out of field
       fmt.Fprintf(w,"Error \n")  // ;;;
       return
     }
-    user[p[init_order[u-1]]["x"]][p[init_order[u-1]]["y"]]=u
+    user[p[u]["x"]][p[u]["y"]]=u
     pcount[u]++
     if(pcount[1]==pcount[2]&&pcount[2]==pcount[3]&&pcount[3]==pcount[4]){
       pcount[0]=pcount[1]
@@ -201,14 +168,13 @@ func MoveServer(w http.ResponseWriter, r *http.Request) {
 func RemoveServer(w http.ResponseWriter, r *http.Request) {
   // fmt.Fprintf(w, "remove\n") yusaku
   r.ParseForm()
-  //curl -X POST localhost:8001/move -d "usr=1&d=right"
+  //curl -X POST localhost:8000/move -d "usr=1&d=right"
   u,_:=strconv.Atoi(r.FormValue("usr"))
   fmt.Println(u)
   fmt.Println(r.FormValue("d"))
   d:=strings.Split(r.FormValue("d"), "")
-  //k:=retIndex(u)
-  tmp_px:=p[init_order[u-1]]["x"]
-  tmp_py:=p[init_order[u-1]]["y"]
+  tmp_px:=p[u]["x"]
+  tmp_py:=p[u]["y"]
   for i:=0; i<len(d); i++{
     if d[i]=="r"{tmp_py++
     }else if d[i]=="l"{tmp_py--
@@ -251,10 +217,10 @@ func UsrpointServer(w http.ResponseWriter, r *http.Request) {
   // fmt.Fprintf(w, "usrpoint\n") yusaku
   r.ParseForm()
   u,_:=strconv.Atoi(r.FormValue("usr"))
-  fmt.Println(p[init_order[u-1]]["x"])
-  fmt.Println(p[init_order[u-1]]["y"])
-  fmt.Fprintf(w,"%d ",p[init_order[u-1]]["y"])
-  fmt.Fprintf(w,"%d",p[init_order[u-1]]["x"])
+  fmt.Println(p[u]["x"])
+  fmt.Println(p[u]["y"])
+  fmt.Fprintf(w,"%d ",p[u]["y"])
+  fmt.Fprintf(w,"%d",p[u]["x"])
 }
 
 func myAbs(x int) int{
@@ -302,17 +268,17 @@ func init_check_area(){
 
 func JudgeServer(w http.ResponseWriter, r *http.Request) { // ;;;
     // fmt.Fprintf(w, "move\n") yusak
-    // curl -X POST localhost:8001/judgedirection -d "usr=1&d=r"
+    // curl -X POST localhost:8000/judgedirection -d "usr=1&d=r"
     r.ParseForm()
-    //curl -X POST localhost:8001/move -d "usr=1&d=right"
+    //curl -X POST localhost:8000/move -d "usr=1&d=right"
     u,_:=strconv.Atoi(r.FormValue("usr"))
     fmt.Println(u)
     fmt.Println(r.FormValue("d"))
     //d:=r.FormValue("d")
     d:=strings.Split(r.FormValue("d"), "")
 
-    tmp_px:=p[init_order[u-1]]["x"]
-    tmp_py:=p[init_order[u-1]]["y"]
+    tmp_px:=p[u]["x"]
+    tmp_py:=p[u]["y"]
     for i:=0; i<len(d); i++{
       if d[i]=="r"{tmp_py++
       }else if d[i]=="l"{tmp_py--
@@ -344,8 +310,8 @@ func JudgeServer(w http.ResponseWriter, r *http.Request) { // ;;;
       // p[u]["x"]=tmp_px
       // p[u]["y"]=tmp_py
     }else{  // out of field
-      fmt.Fprintf(w,"%d ",p[init_order[u-1]]["y"])  // ;;;
-      fmt.Fprintf(w,"%d",p[init_order[u-1]]["x"])  // ;;;
+      fmt.Fprintf(w,"%d ",p[u]["y"])  // ;;;
+      fmt.Fprintf(w,"%d",p[u]["x"])  // ;;;
       fmt.Fprintf(w,"\n") // ;;;
       fmt.Fprintf(w,"Error \n")  // ;;;
       return
@@ -353,15 +319,11 @@ func JudgeServer(w http.ResponseWriter, r *http.Request) { // ;;;
     // user[p[u]["x"]][p[u]["y"]]=u
 }
 
-
 func PointcalcServer(w http.ResponseWriter, r *http.Request) {
   pcalc=user
   point5:=0
   point6:=0
-  var field_point5=0
-  var field_point6=0
-  var tile_point5=0
-  var tile_point6=0
+
 
   for i:=0; i<length; i++{
     for j:=0; j<width; j++ {
@@ -404,7 +366,8 @@ func PointcalcServer(w http.ResponseWriter, r *http.Request) {
 
       }
     }
-  }/*
+  }
+
   for y:=0;y<length;y++{//縦
     for x:=0;x<width;x++{//横
       if(use5[y][x]){
@@ -417,47 +380,8 @@ func PointcalcServer(w http.ResponseWriter, r *http.Request) {
       }
 
     }
-  }*/
-   // tile and field point
-  for y:=0;y<length;y++{//縦
-    for x:=0;x<width;x++{//横
-      if(use5[y][x]){
-        if(pcalc[y][x]==5){point5+=field[y][x]
-        }
-      }
-      if(use6[y][x]){
-        if(pcalc[y][x]==6){point6+=field[y][x]
-        }
-      }
-
-    }
   }
-
-  tile_point5 = point5
-  tile_point6 = point6
-
-  for y:=0;y<length;y++{//縦
-    for x:=0;x<width;x++{//横
-      if(use5[y][x]){
-        if(pcalc[y][x]==5){
-        }else{point5+=myAbs(field[y][x])}
-      }
-      if(use6[y][x]){
-        if(pcalc[y][x]==6){
-        }else{point6+=myAbs(field[y][x])}
-      }
-
-    }
-  }
-
-  field_point5 = point5 - tile_point5
-  field_point6 = point6 - tile_point6
-
-  fmt.Fprintf(w,"%d \n",tile_point5)
-  fmt.Fprintf(w,"%d \n",field_point5)
   fmt.Fprintf(w,"%d \n",point5)
-  fmt.Fprintf(w,"%d \n",tile_point6)
-  fmt.Fprintf(w,"%d \n",field_point6)
   fmt.Fprintf(w,"%d \n",point6)
 
 }
@@ -481,6 +405,72 @@ func fill(x int, y int,c int){
 }
 */
 
+func InitServer(w http.ResponseWriter, r *http.Request) {
+  r.ParseForm()
+  fieldSize:=r.Form["fieldSize"]
+  f_initPosition:=r.Form["f_initPosition"]
+  e_initPosition:=r.Form["e_initPosition"]
+  PointField:=r.Form["PointField"]
+  //fmt.Println(fieldSize)
+  //fmt.Println(f_initPosition)
+  //fmt.Println(e_initPosition)
+  //fmt.Println(PointField)
+  turn=80
+  length, _ =strconv.Atoi(fieldSize[0])
+  width, _ =strconv.Atoi(fieldSize[1])
+
+  field=make([][]int,length)
+  count:=0
+
+  for i:=0; i<length; i++{
+    field[i]=make([]int, width)
+    for j:=0; j<width; j++ {
+      field[i][j], _ = strconv.Atoi(PointField[count])
+      count++
+      //fmt.Println(field[i][j])
+    }
+    //fmt.Println("\n")
+  }
+
+  for i:=0; i<length; i++{
+    user[i]=make([]int, width)
+  }
+
+  tmpf:=[]int{0,0,0,0}
+  tmpe:=[]int{0,0,0,0}
+  for i:=0; i<4; i++{
+    tmpf[i],_=strconv.Atoi(f_initPosition[i])
+    tmpe[i],_=strconv.Atoi(e_initPosition[i])
+  }
+  user[tmpf[0]][tmpf[1]]=1
+  user[tmpf[2]][tmpf[3]]=2
+  user[tmpe[0]][tmpe[1]]=3
+  user[tmpe[2]][tmpe[3]]=4
+
+  for i:=1; i<5; i++{
+    p[i]=make(map[string]int)
+  }
+  p[1]["x"]=tmpf[0]
+  p[1]["y"]=tmpf[1]
+  p[2]["x"]=tmpf[2]
+  p[2]["y"]=tmpf[3]
+  p[3]["x"]=tmpe[0]
+  p[3]["y"]=tmpe[1]
+  p[4]["x"]=tmpe[2]
+  p[4]["y"]=tmpe[3]
+
+/*
+  for i:=0; i<length; i++{
+    for j:=0; j<width; j++ {
+      fmt.Println(user[i][j])
+    }
+    fmt.Println("\n")
+  }
+  */
+
+}
+
+
 
 func main() {
     // http.HandleFuncにルーティングと処理する関数を登録
@@ -491,13 +481,13 @@ func main() {
     http.HandleFunc("/usrpoint", UsrpointServer)
     http.HandleFunc("/pointcalc", PointcalcServer)
     http.HandleFunc("/judgedirection", JudgeServer)
-    // http.HandleFunc("/initpos", InitposServer)
+    http.HandleFunc("/init", InitServer)
 
     // ログ出力
-    log.Printf("Start Go HTTP Server (port number is 8001,learning only)")
+    log.Printf("Start Go HTTP Server (port number is 8000)")
 
     // http.ListenAndServeで待ち受けるportを指定
-    err := http.ListenAndServe(":8001", nil)
+    err := http.ListenAndServe(":8000", nil)
 
     // エラー処理
     if err != nil {

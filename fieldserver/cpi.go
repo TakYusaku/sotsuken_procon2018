@@ -1,5 +1,5 @@
-// learning only port num is 8001
-// 高専プロコンに寄せてターン数，フィールドサイズは当日の条件からランダム
+// learning only port num is 8002
+// 試合で最も多かった条件を採用
 package main
 
 import (
@@ -17,12 +17,13 @@ type String string
 var user=make([][]int,12)
 var pcalc=make([][]int,12)
 var field=make([][]int,12)
-var turn=0
-var length=0
-var width=0
+var turn=40
+var length=11
+var width=8
 var p=make(map[int]map[string]int)
 var pcount [5]int = [5]int{0, 0, 0, 0, 0}
 var init_order [4]int = [4]int{0, 0, 0, 0}
+var init_place [4]int = [4]int{0, 0, 0, 0}
 
 func retIndex(i int) int{
   k:=0
@@ -34,12 +35,6 @@ func retIndex(i int) int{
   return k+1
 }
 
-func choice(s []int) int{
-    rand.Seed(time.Now().UnixNano())
-    i := rand.Intn(len(s))
-    return s[i]
-}
-
 func StartServer(w http.ResponseWriter, r *http.Request) {
     r.ParseForm()
     prov:=r.Form["init_order"]
@@ -47,10 +42,6 @@ func StartServer(w http.ResponseWriter, r *http.Request) {
       init_order[i], _ =strconv.Atoi(prov[i])
     }
 
-    rand.Seed(time.Now().UnixNano())
-    turn=rand.Intn(40)+40
-    length=rand.Intn(4)+8
-    width=rand.Intn(4)+8
     fmt.Fprintf(w,"%d\n",turn)
     fmt.Fprintf(w,"%d\n",length)
     fmt.Fprintf(w,"%d\n",width)
@@ -138,13 +129,12 @@ func InitposServer(w http.ResponseWriter, r *http.Request) {
 func MoveServer(w http.ResponseWriter, r *http.Request) {
     // fmt.Fprintf(w, "move\n") yusaku
     r.ParseForm()
-    //curl -X POST localhost:8001/move -d "usr=1&d=right"
+    //curl -X POST localhost:8002/move -d "usr=1&d=right"
     u,_:=strconv.Atoi(r.FormValue("usr"))
     fmt.Println(u)
     fmt.Println(r.FormValue("d"))
     //d:=r.FormValue("d")
     d:=strings.Split(r.FormValue("d"), "")
-    //k:=retIndex(u)
     if(d[0]=="z"){
       pcount[u]++
       return
@@ -201,12 +191,11 @@ func MoveServer(w http.ResponseWriter, r *http.Request) {
 func RemoveServer(w http.ResponseWriter, r *http.Request) {
   // fmt.Fprintf(w, "remove\n") yusaku
   r.ParseForm()
-  //curl -X POST localhost:8001/move -d "usr=1&d=right"
+  //curl -X POST localhost:8002/move -d "usr=1&d=right"
   u,_:=strconv.Atoi(r.FormValue("usr"))
   fmt.Println(u)
   fmt.Println(r.FormValue("d"))
   d:=strings.Split(r.FormValue("d"), "")
-  //k:=retIndex(u)
   tmp_px:=p[init_order[u-1]]["x"]
   tmp_py:=p[init_order[u-1]]["y"]
   for i:=0; i<len(d); i++{
@@ -302,9 +291,9 @@ func init_check_area(){
 
 func JudgeServer(w http.ResponseWriter, r *http.Request) { // ;;;
     // fmt.Fprintf(w, "move\n") yusak
-    // curl -X POST localhost:8001/judgedirection -d "usr=1&d=r"
+    // curl -X POST localhost:8002/judgedirection -d "usr=1&d=r"
     r.ParseForm()
-    //curl -X POST localhost:8001/move -d "usr=1&d=right"
+    //curl -X POST localhost:8002/move -d "usr=1&d=right"
     u,_:=strconv.Atoi(r.FormValue("usr"))
     fmt.Println(u)
     fmt.Println(r.FormValue("d"))
@@ -494,10 +483,10 @@ func main() {
     // http.HandleFunc("/initpos", InitposServer)
 
     // ログ出力
-    log.Printf("Start Go HTTP Server (port number is 8001,learning only)")
+    log.Printf("Start Go HTTP Server (port number is 8002,learning only)")
 
     // http.ListenAndServeで待ち受けるportを指定
-    err := http.ListenAndServe(":8001", nil)
+    err := http.ListenAndServe(":8002", nil)
 
     // エラー処理
     if err != nil {
