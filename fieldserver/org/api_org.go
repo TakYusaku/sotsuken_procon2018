@@ -23,6 +23,7 @@ var p=make(map[int]map[string]int)
 var pcount [5]int = [5]int{0, 0, 0, 0, 0}
 
 func StartServer(w http.ResponseWriter, r *http.Request) {
+    // ターン数，縦横の選定
     rand.Seed(time.Now().UnixNano())
     turn=rand.Intn(60)+60
     turn=15
@@ -31,6 +32,7 @@ func StartServer(w http.ResponseWriter, r *http.Request) {
     fmt.Fprintf(w,"%d\n",turn)
     fmt.Fprintf(w,"%d\n",length)
     fmt.Fprintf(w,"%d\n",width)
+    // ここからポイントフィールドの作成
     field=make([][]int,(length+1)/2)
     for i:=0; i<(length+1)/2; i++{
       field[i]=make([]int, width)
@@ -54,22 +56,11 @@ func StartServer(w http.ResponseWriter, r *http.Request) {
       }
       fmt.Fprintf(w,"\n")
     }
-
-    //user:=make([][]int,length)
+    // ここまで
+    // ここからユーザフィールド作成
     for i:=0; i<length; i++{
       user[i]=make([]int, width)
     }
-/*
-    fmt.Fprintf(w,"%d ",width)
-    fmt.Fprintf(w,"\n")
-    fmt.Fprintf(w,"%d ",width/2-1)
-    fmt.Fprintf(w,"\n")
-    fmt.Fprintf(w,"%d ",(width/2-1)-2)
-    //a:=rand.Intn((width/2-1)-2)+1
-    //fmt.Fprintf(w,"%d ",a)
-    fmt.Fprintf(w,"\n")
-*/
-    //p:=make(map[int]map[string]int)
     for i:=1; i<5; i++{
       p[i]=make(map[string]int)
     }

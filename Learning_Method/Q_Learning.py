@@ -11,9 +11,9 @@ import pprint
 #import # 敵のデータ
 
 # update Qtables
-def updateQtable(env, q_table, observation, action, reward, next_observation):
+def updateQtable(env, q_table, observation, action, reward, next_observation,al):
     gamma = 0.99 # time discount rate
-    alpha = 0.1 # learning rate
+    alpha = al # learning rate
 
     #行動後の状態で得られる最大行動価値　(つまり最も良い行動を選ぶ)
     next_position = env.getStatus(next_observation)

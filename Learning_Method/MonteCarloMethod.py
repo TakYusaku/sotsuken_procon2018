@@ -74,9 +74,9 @@ def getAction(env, q_table, observation, episode,choice): # get action (array)  
 """
 
 # [] update Qtables
-def updateQtable(q_table, memory):#observation, action, reward, next_observation):
+def updateQtable(q_table, memory,al):#observation, action, reward, next_observation):
     gamma = 0.99 # time discount rate
-    alpha = 0.1 # learning rate
+    alpha = al # learning rate
     total_reward_t = 0
     while (memory.len() > 0):
         (state, action, reward) = memory.sample()

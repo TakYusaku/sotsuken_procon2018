@@ -1,5 +1,5 @@
 // learning only port num is 8002
-// 試合で最も多かった条件を採用
+// 高専プロコンに寄せてターン数，フィールドサイズは当日の最も多かった条件から
 package main
 
 import (
@@ -17,42 +17,34 @@ type String string
 var user=make([][]int,12)
 var pcalc=make([][]int,12)
 var field=make([][]int,12)
-var turn=40
-var length=11
-var width=8
+var turn=0
+var length=0
+var width=0
+var pattern=0
 var p=make(map[int]map[string]int)
 var pcount [5]int = [5]int{0, 0, 0, 0, 0}
 var init_order [4]int = [4]int{0, 0, 0, 0}
-var init_place [4]int = [4]int{0, 0, 0, 0}
+var turn_pat [4]int = [4]int{40,50,60,80}
+var width_pat [4]int = [4]int{8,9,10,12}
+var length_pat [4]int = [4]int{11,12,12,12}
 
-func retIndex(i int) int{
-  k:=0
-  for j:=0; j<4; j++{
-    if(init_order[j] == i){
-      k = j
-    }
-  }
-  return k+1
-}
 
-func StartServer(w http.ResponseWriter, r *http.Request) {
-    r.ParseForm()
-    prov:=r.Form["init_order"]
-    for i:=0; i<4; i++{
-      init_order[i], _ =strconv.Atoi(prov[i])
-    }
-
-    fmt.Fprintf(w,"%d\n",turn)
-    fmt.Fprintf(w,"%d\n",length)
-    fmt.Fprintf(w,"%d\n",width)
+func retPField(i int){  // 初期ならびによるポイントフィールドの作成
+  if(i==0){ // 初期並びが横並び
     field=make([][]int,(length+1)/2)
     for i:=0; i<(length+1)/2; i++{
       field[i]=make([]int, width)
       for j:=0; j<width; j++ {
-        field[i][j]=rand.Intn(32)-16
-        //fmt.Fprintf(w,"%d ",field[i][j])
+        rand.Seed(time.Now().UnixNano())
+        a:=rand.Intn(99)+1
+        if a <= 5{
+          rand.Seed(time.Now().UnixNano())
+          field[i][j]= -1 * rand.Intn(16)
+        }else {
+          rand.Seed(time.Now().UnixNano())
+          field[i][j]=rand.Intn(15)+1
+        }
       }
-      //fmt.Fprintf(w,"\n")
     }
 
     tmp_field:=make([][]int,length/2)
@@ -62,28 +54,64 @@ func StartServer(w http.ResponseWriter, r *http.Request) {
     }
     field=append(field,tmp_field...)
 
+  }else if(i==1){ // 初期並びが縦並び
+    field=make([][]int,length)
+    for i:=0; i<length; i++{
+      field[i]=make([]int,width)
+      for j:=0; j<width; j++ {
+        if j<(width+1)/2{
+          a:=rand.Intn(99)+1
+          if a <= 5{
+            rand.Seed(time.Now().UnixNano())
+            field[i][j]= -1 * rand.Intn(16)
+          }else {
+            field[i][j]=rand.Intn(15)+1
+          }
+        }else if j>=(width+1)/2{
+          field[i][j]=field[i][width-(j+1)]
+        }
+      }
+    }
+  }
+}
+
+func StartServer(w http.ResponseWriter, r *http.Request) {
+    r.ParseForm()
+    prov:=r.Form["init_order"]
+    pat:=r.Form["pattern"]
+    for i:=0; i<4; i++{
+      init_order[i], _ =strconv.Atoi(prov[i])
+    }
+    pattern, _ =strconv.Atoi(pat[0])
+    if pattern == 2 {
+      rand.Seed(time.Now().UnixNano())
+      pattern = rand.Intn(2)
+    }
+    // ターン数,縦横の選定
+    turn_num:=0
+    turn=turn_pat[turn_num]
+    length=length_pat[turn_num]
+    width=width_pat[turn_num]
+
+    fmt.Fprintf(w,"%d\n",turn)
+    fmt.Fprintf(w,"%d\n",length)
+    fmt.Fprintf(w,"%d\n",width)
+
+    // ここからポイントフィールド作成
+    retPField(pattern)
     for i:=0; i<length; i++{
       for j:=0; j<width; j++ {
         fmt.Fprintf(w,"%d ",field[i][j])
       }
       fmt.Fprintf(w,"\n")
     }
+    // ここまで
 
-    //user:=make([][]int,length)
+    // ここからユーザーフィールド作成
     for i:=0; i<length; i++{
       user[i]=make([]int, width)
     }
-/*
-    fmt.Fprintf(w,"%d ",width)
-    fmt.Fprintf(w,"\n")
-    fmt.Fprintf(w,"%d ",width/2-1)
-    fmt.Fprintf(w,"\n")
-    fmt.Fprintf(w,"%d ",(width/2-1)-2)
-    //a:=rand.Intn((width/2-1)-2)+1
-    //fmt.Fprintf(w,"%d ",a)
-    fmt.Fprintf(w,"\n")
-*/
-    //p:=make(map[int]map[string]int)
+
     for i:=1; i<5; i++{
       p[i]=make(map[string]int)
     }
@@ -99,15 +127,9 @@ func StartServer(w http.ResponseWriter, r *http.Request) {
     p[4]["y"]=width-y-1
 
     for i:=1; i<5; i++{
-      user[p[i]["x"]][p[i]["y"]]=retIndex(i)
+      user[p[i]["x"]][p[i]["y"]]=init_order[i-1]
     }
 
-/*
-    user[x][y]=1
-    user[x][width-y-1]=2
-    user[length-x-1][y]=3
-    user[length-x-1][width-y-1]=4
-*/
     for i:=0; i<length; i++{
       for j:=0; j<width; j++ {
         fmt.Fprintf(w,"%d ",user[i][j])
@@ -116,16 +138,7 @@ func StartServer(w http.ResponseWriter, r *http.Request) {
     }
 
 }
-/*
-func InitposServer(w http.ResponseWriter, r *http.Request) {
-  r.ParseForm()
-  prov:=r.Form["init_pattern"]
-  for i:=0; i<4; i++{
-    init_pattern[i], _ =strconv.Atoi(prov[i])
-  }
-  fmt.Println(init_pattern)
-}
-*/
+
 func MoveServer(w http.ResponseWriter, r *http.Request) {
     // fmt.Fprintf(w, "move\n") yusaku
     r.ParseForm()
@@ -450,25 +463,6 @@ func PointcalcServer(w http.ResponseWriter, r *http.Request) {
   fmt.Fprintf(w,"%d \n",point6)
 
 }
-
-
-/*
-func fill(x int, y int,c int){
-  user[x][y]=9
-  if(user[x][y-1]==c){
-    fill(x,y-1,c)
-  }
-  if(user[x+1][y]==c){
-    fill(x+1,y,c)
-  }
-  if(user[x][y+1]==c){
-    fill(x,y+1,c)
-  }
-  if(user[x-1][y]==c){
-    fill(x-1,y,c)
-  }
-}
-*/
 
 
 func main() {
