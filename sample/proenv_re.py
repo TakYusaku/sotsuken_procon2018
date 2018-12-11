@@ -31,9 +31,9 @@ class procon18Env_re(gym.Env): #define environment
         self._4action_space = gym.spaces.Discrete(9) #行動(Action)の張る空間
         self._4reward_range = [-120.,100.] #報酬の最小値と最大値のリスト
 
-    def makeField(self,init_order):  # make point field . return is tuple of (Row, Column)   // verified
+    def makeField(self,pattern,init_order):  # make point field . return is tuple of (Row, Column)   // verified
         url = self.local_url + '/start'
-        info = {"init_order":init_order}
+        info = {"init_order":init_order,"pattern":pattern}
         response = requests.post(url, data=info)
         f = response.text.encode('utf-8').decode().replace("\n", " ").replace("  "," ")
         iv_list = [int(i) for i in f.split()] #listing initial value
@@ -58,11 +58,13 @@ class procon18Env_re(gym.Env): #define environment
             pass
         else:
             self.local_url = 'http://localhost:' + str(port)
+        p = random.choice([[0,1,2,3,4],[0,3,4,1,2],[1,1,3,2,4],[1,3,1,4,2],[3,1,3,4,2],[3,3,1,2,4]])
 
-        index = random.sample(range(4), 4)#抽出する添字を取得
-        self.init_order = [i+1 for i in index]
+        self.pattern = p[0]
+        p.pop(0)
+        self.init_order = p
 
-        fs = self.makeField(self.init_order)
+        fs = self.makeField(self.pattern,self.init_order)
 
         self._1observation_space = gym.spaces.Box( #観測値(Observation)の張る空間,環境から得られる値
             low = -16, #x軸の最値,y軸の最小値,pointsの最小値
@@ -189,6 +191,7 @@ class procon18Env_re(gym.Env): #define environment
         url = self.local_url + '/pointcalc'
         response = requests.post(url).text.encode('utf-8').decode().replace("\n", " ").replace("  "," ")
         iv_list = [int(i) for i in response.split()]
+        self.points = [iv_list[2],iv_list[5]]
         return iv_list
 
     def judVoL(self): #judge won or lose  str  // verified

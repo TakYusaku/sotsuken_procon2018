@@ -1,0 +1,3 @@
+==================== start ( start time : 20181211_023205 ) ==================== 
+port num is 8000, epoch is 1, q learning late is 0.1, mcm learning late is 0.1, q learning type is nb, mcm type is nb, qtable of q learning is q_table_QL.csv, qtable of mcm is q_table_MCM.csv .
+-------------------------------------------------- 

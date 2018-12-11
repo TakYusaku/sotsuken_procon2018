@@ -1,0 +1,7 @@
+#myenv2
+# ----------------------------------------
+register(
+    id='procon18env_re-v0',
+    entry_point='gym.envs.myenv2:procon18Env_re',
+)
+# ----------------------------------------

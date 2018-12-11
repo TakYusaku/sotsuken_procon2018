@@ -1,0 +1,6 @@
+==================== start ( start time : 20181211_023222 ) ==================== 
+port num is 8000, epoch is 1, q learning late is 0.1, mcm learning late is 0.1, q learning type is nb, mcm type is nb, qtable of q learning is q_table_QL.csv, qtable of mcm is q_table_MCM.csv .
+-------------------------------------------------- 
+successfuly! : runtime is 0:00:03.653200 
+agent1 won : 0 , agent2 won : 1/ WPCT of agent1 is 0.0 , agent2 is 1.0 / avarage of reward1 is 7966.0 , reward2 is 16101.0 .
+==================== finished *successfuly* ( finished time : 20181211_023226 ) ==================== 

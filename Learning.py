@@ -59,6 +59,8 @@ if __name__ == '__main__':
         memory2 = M.Memory(terns)
 
         fs,epi_starttime = ts.getTime("timestamp_s")
+        m = "epoch : " + str(episode) + " / " + str(num_episode)
+        print(m)
 
         for i in range(terns):
             env.countStep() # epoch num のカウント
@@ -108,10 +110,10 @@ if __name__ == '__main__':
         s[5].append(s_p[5])
         if env.judVoL() == "Win_1":
             Win1 += 1
-            print('Win1')
+            print('agent1 won')
         else:
             Win2 += 1
-            print('Win2')
+            print('agent2 won')
 
         if episode%500 == 0 and episode!=num_episode-1 :
             ts.writeQtable(fm, info[8], q_table, episode)
