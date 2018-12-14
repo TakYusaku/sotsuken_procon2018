@@ -66,6 +66,7 @@ if __name__ == '__main__':
             print(m)
 
             """
+            ## 例外発生(try-expectのテスト)
             if episode == 6:
                 raise Exception
             """
