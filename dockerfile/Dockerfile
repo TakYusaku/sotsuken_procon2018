@@ -12,9 +12,7 @@ RUN apt install -y nano && echo "successful!"
 RUN apt install -y git && echo "successful!"
 RUN apt install -y golang-go && echo "successful!"
 RUN pip3 install gym && pip3 install matplotlib && pip3 install && pip3 install retry && echo "successful!"
-RUN cd home && git clone https://github.com/TakYusaku/sotsuken_procon2018.git #&& cd sotsuken_procon2018/gym_myenvs/myenv2/
-RUN mkdir /usr/local/lib/python3.6/dist-packages/gym/envs/myenv2 && cp * /usr/local/lib/python3.6/dist-packages/gym/envs/myenv2 && cd ../
-RUN cp __init__.py /usr/local/lib/python3.6/dist-packages/gym/envs/
+RUN cd home && git clone https://github.com/TakYusaku/sotsuken_procon2018.git && cd sotsuken_procon2018/gym_myenvs/myenv2/ && mkdir /usr/local/lib/python3.6/dist-packages/gym/envs/myenv2 && cp * /usr/local/lib/python3.6/dist-packages/gym/envs/myenv2 && cd ../ && cp __init__.py /usr/local/lib/python3.6/dist-packages/gym/envs/
 RUN echo "successful!"
 
 CMD echo 'Hello docker of sotsuken world!'
