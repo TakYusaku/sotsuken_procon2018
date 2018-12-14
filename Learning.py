@@ -59,7 +59,7 @@ if __name__ == '__main__':
         memory2 = M.Memory(terns)
 
         fs,epi_starttime = ts.getTime("timestamp_s")
-        m = "epoch : " + str(episode) + " / " + str(num_episode)
+        m = "epoch : " + str(episode+1) + " / " + str(num_episode)
         print(m)
 
         for i in range(terns):
@@ -115,10 +115,10 @@ if __name__ == '__main__':
             Win2 += 1
             print('agent2 won')
 
-        if episode%500 == 0 and episode!=num_episode-1 :
+        if episode != 0 and episode%2 == 0 and episode!=num_episode-1 :
             ts.writeQtable(fm, info[8], q_table, episode)
             ts.writeQtable(fm ,info[9], q_table_Enemy, episode)
-            info_epoch = [epi_processtime/episode,float(Win1/episode),float(Win2/episode),float(sum(f_rr)/episode),float(sum(e_rr)/episode)]
+            info_epoch = [epi_processtime[episode],float(Win1/episode),float(Win2/episode),float(sum(f_rr)/episode),float(sum(e_rr)/episode)]
             ts.Log(fm,"now learning",info_epoch,episode)
             ts.saveImage(fm,s,f_rr,e_rr,episode)
 

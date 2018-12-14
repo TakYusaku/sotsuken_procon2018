@@ -58,7 +58,7 @@ class procon18Env_re(gym.Env): #define environment
             pass
         else:
             self.local_url = 'http://localhost:' + str(port)
-        p = random.choice([[0,1,2,3,4],[0,3,4,1,2],[1,1,3,2,4],[1,3,1,4,2],[3,1,3,4,2],[3,3,1,2,4]])
+        p = random.choice([[0,1,2,3,4],[0,3,4,1,2],[1,1,3,2,4],[1,3,1,4,2],[2,1,3,4,2],[2,3,1,2,4]])
 
         self.pattern = p[0]
         p.pop(0)
@@ -191,7 +191,6 @@ class procon18Env_re(gym.Env): #define environment
         url = self.local_url + '/pointcalc'
         response = requests.post(url).text.encode('utf-8').decode().replace("\n", " ").replace("  "," ")
         iv_list = [int(i) for i in response.split()]
-        self.points = [iv_list[2],iv_list[5]]
         return iv_list
 
     def judVoL(self): #judge won or lose  str  // verified
