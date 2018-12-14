@@ -76,6 +76,7 @@ func retPField(i int){  // 初期ならびによるポイントフィールド�
   }
 }
 
+
 func StartServer(w http.ResponseWriter, r *http.Request) {
     r.ParseForm()
     prov:=r.Form["init_order"]

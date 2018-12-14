@@ -17,6 +17,11 @@ type String string
 var user=make([][]int,12)
 var pcalc=make([][]int,12)
 var field=make([][]int,12)
+
+// var user_t=make([][]int,14)
+// var pcalc=make([][]int,12)
+var field_t=make([][]int,14)
+
 var turn=0
 var length=0
 var width=0
@@ -72,6 +77,112 @@ func retPField(i int){  // 初期ならびによるポイントフィールド�
         }
       }
     }
+  }
+}
+
+func retServer(w http.ResponseWriter, r *http.Request){
+  length=11
+  width=8
+  rand.Seed(time.Now().UnixNano())
+  k:=rand.Intn(2)
+  fmt.Fprintf(w,"%d ",k)
+  fmt.Fprintf(w,"\n")
+  if k==0{ // 初期並びが横並び
+    field_t=make([][]int,(length+1)/2+1) // 7
+    for i:=0; i<(length+1)/2+1; i++{
+      field_t[i]=make([]int, 14)
+      for j:=0; j<14; j++ {
+        if i == 0 || j >= width+1{
+          field_t[i][j]= 0
+        }else if i != 0 && j < width+1{
+          rand.Seed(time.Now().UnixNano())
+          a:=rand.Intn(99)+1
+          if j==0{
+            field_t[i][j]= 0
+          }else if j!=0 && a<=5{
+            rand.Seed(time.Now().UnixNano())
+            field_t[i][j]= -1 * rand.Intn(16)
+          }else {
+            rand.Seed(time.Now().UnixNano())
+            field_t[i][j]=rand.Intn(15)+1
+          }
+        }
+      }
+    }
+    tmp_field:=make([][]int,(length+1)/2+1) // 7
+    for i:=0; i<(length+1)/2+1; i++{
+      tmp_field[i]=make([]int, 14)
+      if i>=length/2{
+        for j:=0; j<14; j++{
+          tmp_field[i][j]=0
+        }
+      }else{
+        tmp_field[i]=field_t[((length+1)/2)-(i+1)] // 4-i
+      }
+    }
+    field_t=append(field_t,tmp_field...)
+  }else if k==1{ // 初期並びが縦並び
+    field_t=make([][]int,14)
+    for i:=0; i<14; i++{
+      field_t[i]=make([]int,14)
+      for j:=0; j<14; j++ {
+        if i==0 || i>length || j>=width+1 {
+          field_t[i][j]=0
+        }else if i!=0 && j<(width+1)/2+1{
+          a:=rand.Intn(99)+1
+          if j==0{
+            field_t[i][j] = 0
+          }else if j!=0 && a <= 5{
+            rand.Seed(time.Now().UnixNano())
+            field_t[i][j]= -1 * rand.Intn(16)
+          }else {
+            rand.Seed(time.Now().UnixNano())
+            field_t[i][j]=rand.Intn(15)+1
+          }
+        }else if j>=(width+1)/2+1 && j<width+1{
+          field_t[i][j]=field_t[i][width+1-j]
+        }
+      }
+    }
+  }
+  for i:=0; i<14; i++{
+    for j:=0; j<14; j++ {
+      fmt.Fprintf(w,"%d ",field_t[i][j])
+    }
+    fmt.Fprintf(w,"\n")
+  }
+
+  // ここからユーザーフィールド作成
+  for i:=0; i<length; i++{
+    user[i]=make([]int, width)
+  }
+
+  for i:=1; i<5; i++{
+    p[i]=make(map[string]int)
+  }
+  x:=rand.Intn((width/2-1)-2)+1
+  y:=rand.Intn((length/2-1)-2)+1
+  p[1]["x"]=x
+  p[1]["y"]=y
+  p[2]["x"]=x
+  p[2]["y"]=width-y-1
+  p[3]["x"]=length-x-1
+  p[3]["y"]=y
+  p[4]["x"]=length-x-1
+  p[4]["y"]=width-y-1
+
+  for i:=1; i<5; i++{
+    if i<=2{
+      user[p[i]["x"]][p[i]["y"]]=1
+    }else{
+      user[p[i]["x"]][p[i]["y"]]=2
+    }
+  }
+  for i:=0; i<length; i++{
+    for j:=0; j<width; j++ {
+      fmt.Fprintf(w,"%d ",user[i][j])
+    }
+    fmt.Fprintf(w,"\n")
   }
 }
 
@@ -468,6 +579,7 @@ func PointcalcServer(w http.ResponseWriter, r *http.Request) {
 func main() {
     // http.HandleFuncにルーティングと処理する関数を登録
     http.HandleFunc("/start", StartServer)
+    http.HandleFunc("/start_ret", retServer)
     http.HandleFunc("/move", MoveServer)
     http.HandleFunc("/remove", RemoveServer)
     http.HandleFunc("/show", ShowServer)
