@@ -1,0 +1,7 @@
+==================== start ( start time : 20181216_234223 ) ==================== 
+port num is 8002, epoch is 10, q learning late is 0.1, mcm learning late is 0.1, q learning type is nb, mcm type is nb, qtable of q learning is q_table_QL.csv, qtable of mcm is q_table_MCM.csv .
+-------------------------------------------------- 
+error! : runtime is 0:00:00.152769
+(<class 'NameError'>, NameError("name 'rang' is not defined"), <traceback object at 0x110d937c8>)
+agent1 won : 0 , agent2 won : 0/ WPCT of agent1 is 0.0 , agent2 is 0.0 / avarage of reward1 is 0.0 , reward2 is 0.0 .
+==================== finished *error* ( finished time : 20181216_234223 ) ==================== 

@@ -18,9 +18,10 @@ var user=make([][]int,12)
 var pcalc=make([][]int,12)
 var field=make([][]int,12)
 
-// var user_t=make([][]int,14)
+var user_oot=make([][]int,14)
+var field_oot=make([][]int,14)
 // var pcalc=make([][]int,12)
-var field_t=make([][]int,14)
+// var field_t=make([][]int,14)
 
 var turn=0
 var length=0
@@ -80,6 +81,30 @@ func retPField(i int){  // 初期ならびによるポイントフィールド�
   }
 }
 
+func retConvPField(w http.ResponseWriter, r *http.Request){
+  for i:=0; i<14; i++{
+    for j:=0; j<14; j++ {
+      fmt.Fprintf(w,"%d ",field_oot[i][j])
+    }
+    fmt.Fprintf(w,"\n")
+  }
+}
+
+func retConvUField(w http.ResponseWriter, r *http.Request){
+  for i:=0; i<length; i++{
+    for j:=0; j<width; j++{
+      user_oot[i+1][j+1]=user[i][j]
+
+    }
+  }
+  for i:=0; i<14; i++{
+    for j:=0; j<14; j++ {
+      fmt.Fprintf(w,"%d ",user_oot[i][j])
+    }
+    fmt.Fprintf(w,"\n")
+  }
+}
+/*
 func retServer(w http.ResponseWriter, r *http.Request){
   length=11
   width=8
@@ -157,6 +182,10 @@ func retServer(w http.ResponseWriter, r *http.Request){
     user[i]=make([]int, width)
   }
 
+  for i:=0; i<14; i++{
+    user_oot[i]=make([]int, 14)
+  }
+
   for i:=1; i<5; i++{
     p[i]=make(map[string]int)
   }
@@ -172,19 +201,28 @@ func retServer(w http.ResponseWriter, r *http.Request){
   p[4]["y"]=width-y-1
 
   for i:=1; i<5; i++{
+    user[p[i]["x"]][p[i]["y"]]=i
     if i<=2{
-      user[p[i]["x"]][p[i]["y"]]=1
+      user_oot[p[i]["x"]+1][p[i]["y"]+1]=1
     }else{
-      user[p[i]["x"]][p[i]["y"]]=2
+      user_oot[p[i]["x"]+1][p[i]["y"]+1]=2
     }
   }
+
   for i:=0; i<length; i++{
     for j:=0; j<width; j++ {
       fmt.Fprintf(w,"%d ",user[i][j])
     }
     fmt.Fprintf(w,"\n")
   }
+  for i:=0; i<14; i++{
+    for j:=0; j<14; j++ {
+      fmt.Fprintf(w,"%d ",user_oot[i][j])
+    }
+    fmt.Fprintf(w,"\n")
+  }
 }
+*/
 
 func StartServer(w http.ResponseWriter, r *http.Request) {
     r.ParseForm()
@@ -197,6 +235,10 @@ func StartServer(w http.ResponseWriter, r *http.Request) {
     if pattern == 2 {
       rand.Seed(time.Now().UnixNano())
       pattern = rand.Intn(2)
+    }
+    for i:=0; i<14; i++{
+      user_oot[i]=make([]int, 14)
+      field_oot[i]=make([]int, 14)
     }
     // ターン数,縦横の選定
     turn_num:=0
@@ -213,6 +255,7 @@ func StartServer(w http.ResponseWriter, r *http.Request) {
     for i:=0; i<length; i++{
       for j:=0; j<width; j++ {
         fmt.Fprintf(w,"%d ",field[i][j])
+        field_oot[i+1][j+1]=field[i][j]
       }
       fmt.Fprintf(w,"\n")
     }
@@ -579,7 +622,9 @@ func PointcalcServer(w http.ResponseWriter, r *http.Request) {
 func main() {
     // http.HandleFuncにルーティングと処理する関数を登録
     http.HandleFunc("/start", StartServer)
-    http.HandleFunc("/start_ret", retServer)
+  //  http.HandleFunc("/start_ret", retServer)
+    http.HandleFunc("/show/im_field", retConvPField)
+    http.HandleFunc("/show/im_user", retConvUField)
     http.HandleFunc("/move", MoveServer)
     http.HandleFunc("/remove", RemoveServer)
     http.HandleFunc("/show", ShowServer)

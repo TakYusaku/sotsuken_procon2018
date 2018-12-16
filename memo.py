@@ -3,18 +3,16 @@ import random
 import numpy as np
 import os
 import datetime
+import pprint
 """
 now = datetime.datetime.now()
 fm = './qtable/' + now.strftime("%Y%m%d_%H%M%S")
 os.mkdir(fm)
 
-
 p = random.choice([[0,1,2,3,4],[0,3,4,1,2],[1,1,3,2,4],[1,3,1,4,2],[2,1,3,4,2],[2,3,1,2,4]])
-print(p)
 pattern = p[0]
 p.pop(0)
 init_order = p
-
 
 info = {"init_order":init_order,"pattern":pattern}
 response = requests.post('http://localhost:8002/start', data=info)
@@ -23,7 +21,6 @@ p = random.choice([[0,1,2,3,4],[0,3,4,1,2],[1,1,3,2,4],[1,3,1,4,2],[3,1,3,4,2],[
 print(p)
 p.pop(0)
 print(p)
-"""
 def getTime(type, start=None):
     now = datetime.datetime.now()
     if start is None and type == "filename":
@@ -52,7 +49,7 @@ def init_func(fm):
     os.mkdir(mkdi)
     mkdi = './log/' + fm + '/images/result_reward'
     os.mkdir(mkdi)
-"""
+
 now1 = datetime.datetime.now()
 fm = now1.strftime("%Y%m%d_%H%M%S")
 s = [[],[],[],[],[]]
@@ -67,8 +64,36 @@ a = getTime("timestamp_on",start)
 print(a)
 print(a/2)
 print(sum([0,1,2,3,4,5])/5)
-"""
+
 a = [1,2,3,4,5,6,7,8]
 print(float(sum(a)/8))
 fs,now = getTime("filename")
 init_func(fs)
+"""
+local_url = 'http://localhost:8002'
+
+def savePField():
+    global local_url
+    url = local_url + '/show/im_field'
+    resp = requests.get(url).text.encode('utf-8').decode().replace("\n", " ").replace("  "," ")
+    li_pfield = [int(i) for i in resp.split()]
+    return li_pfield
+
+def saveUField():
+    global local_url
+    url = local_url + '/show/im_user'
+    resp = requests.get(url).text.encode('utf-8').decode().replace("\n", " ").replace("  "," ")
+    li_ufield = [int(i) for i in resp.split()]
+    return li_ufield
+
+if __name__ == "__main__":
+    p = random.choice([[0,1,2,3,4],[0,3,4,1,2],[1,1,3,2,4],[1,3,1,4,2],[2,1,3,4,2],[2,3,1,2,4]])
+    pattern = p[0]
+    p.pop(0)
+    init_order = p
+
+    info = {"init_order":init_order,"pattern":pattern}
+    response = requests.post('http://localhost:8002/start', data=info)
+
+    print(savePField())
+    print(saveUField())

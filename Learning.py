@@ -31,7 +31,7 @@ if __name__ == '__main__':
     # 学習プラットフォームの選択
     env = gym.make('procon18env_re-v0')
     # 学習回数
-    num_episode = int(info[1])
+    num_episode = 10#int(info[1])
     # 学習率 _q is q learning, _m is mcm
     al_q = info[4]
     al_m = info[5]
@@ -52,7 +52,7 @@ if __name__ == '__main__':
     kari_epi = 0
 
     try:
-        for episode in range(num_episode):
+        for episode in range(10):#num_episode):
             kari_epi += 1
             observation = env.reset(int(info[0]))
             terns = env.terns
@@ -72,6 +72,7 @@ if __name__ == '__main__':
             """
 
             for i in range(terns):
+                ts.saveField(env, fm, episode, i)
                 env.countStep() # epoch num のカウント
                 # 状態の取得
                 ob_f = env.getStatus(observation[0])

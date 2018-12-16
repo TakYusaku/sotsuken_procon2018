@@ -1,9 +1,9 @@
 FROM ubuntu:18.04
 
 # 学外でbuildするならば，以下のENVをコメントアウト
-ENV http_proxy="http://http-p.srv.cc.suzuka-ct.ac.jp:8080/"
-ENV https_proxy="http://http-p.srv.cc.suzuka-ct.ac.jp:8080/"
-ENV no_proxy=127.0.0.1,localhost
+#ENV http_proxy="http://http-p.srv.cc.suzuka-ct.ac.jp:8080/"
+#ENV https_proxy="http://http-p.srv.cc.suzuka-ct.ac.jp:8080/"
+#ENV no_proxy=127.0.0.1,localhost
 
 RUN apt update && echo "successful!"
 RUN apt install -y python3-pip && echo "successful!"

@@ -1,4 +1,5 @@
 import csv
+import gym
 import numpy as np
 import sys
 import datetime
@@ -21,6 +22,12 @@ def init_func(fm):
     mkdi = './log/' + fm + '/images/result_fieldpoint'
     os.mkdir(mkdi)
     mkdi = './log/' + fm + '/images/result_reward'
+    os.mkdir(mkdi)
+    mkdi = './log/' + fm + '/im_field'
+    os.mkdir(mkdi)
+    mkdi = './log/' + fm + '/im_field/point'
+    os.mkdir(mkdi)
+    mkdi = './log/' + fm + '/im_field/tile'
     os.mkdir(mkdi)
 
 def readQtable(type):
@@ -104,6 +111,31 @@ def mkCSV_reward_init(epoch):
         writer = csv.writer(file, lineterminator='\n')
         writer.writerows(q_table)
 """
+def saveField(env, fm, epoch, turn):
+    """
+    if epoch == 0:
+        mkdi = './log/' + fm + '/im_field'
+        os.mkdir(mkdi)
+        mkdi = './log/' + fm + '/im_field/point'
+        os.mkdir(mkdi)
+        mkdi = './log/' + fm + '/im_field/tile'
+        os.mkdir(mkdi)
+    """
+    if turn == 0:
+        mkdi = './log/' + fm + '/im_field/tile/' + str(epoch)
+        os.mkdir(mkdi)
+        pf = env.savePField()
+        pf_a = np.array(pf)
+        fn = './log/' + fm + '/im_field/point/' + str(epoch) + '_point.csv'
+        with open(fn, 'w') as file:
+            writer = csv.writer(file, lineterminator='\n')
+            writer.writerows(pf_a)
+    uf = env.saveUField()
+    uf_a = np.array(uf)
+    fn = './log/' + fm + '/im_field/tile/' + str(epoch) + '/' + str(epoch) + '_' + str(turn) + '_tile.csv'
+    with open(fn, 'w') as file:
+        writer = csv.writer(file, lineterminator='\n')
+        writer.writerows(uf_a)
 
 def saveImage(fm,s,f_rr,e_rr,episode):
     plt.figure()
