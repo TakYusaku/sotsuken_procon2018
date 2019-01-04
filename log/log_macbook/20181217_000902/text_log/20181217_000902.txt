@@ -1,0 +1,7 @@
+==================== start ( start time : 20181217_000902 ) ==================== 
+port num is 8002, epoch is 5000, q learning late is 0.1, mcm learning late is 0.1, q learning type is nb, mcm type is nb, qtable of q learning is q_table_QL.csv, qtable of mcm is q_table_MCM.csv .
+-------------------------------------------------- 
+error! : runtime is 0:02:03.199756
+(<class 'KeyboardInterrupt'>, KeyboardInterrupt(), <traceback object at 0x116127dc8>)
+agent1 won : 1 , agent2 won : 21/ WPCT of agent1 is 0.0002 , agent2 is 0.0042 / avarage of reward1 is 3078.521739130435 , reward2 is 5659.217391304348 .
+==================== finished *error* ( finished time : 20181217_001105 ) ==================== 

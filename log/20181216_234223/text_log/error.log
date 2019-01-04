@@ -1,8 +1,0 @@
-Traceback (most recent call last):
-  File "Learning.py", line 75, in <module>
-    ts.saveField(env, fm, episode, i)
-  File "/Users/tkhashi/develop/procon2018/sotsuken/tools/tools.py", line 119, in saveField
-    pf = env.savePField()
-  File "/usr/local/lib/python3.7/site-packages/gym/envs/myenv2/proenv_re.py", line 271, in savePField
-    for i in rang(14):
-NameError: name 'rang' is not defined

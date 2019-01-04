@@ -1,6 +1,0 @@
-Traceback (most recent call last):
-  File "Learning.py", line 75, in <module>
-    ts.saveField(env, fm, episode, i)
-  File "/Users/tkhashi/develop/procon2018/sotsuken/tools/tools.py", line 125, in saveField
-    uf = emv.saveUField()
-NameError: name 'emv' is not defined

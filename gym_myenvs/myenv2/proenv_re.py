@@ -5,7 +5,7 @@ import numpy as np
 import json
 import random
 import gym.spaces
-#import
+from retry import retry
 
 
 class procon18Env_re(gym.Env): #define environment
@@ -31,6 +31,7 @@ class procon18Env_re(gym.Env): #define environment
         self._4action_space = gym.spaces.Discrete(9) #行動(Action)の張る空間
         self._4reward_range = [-120.,100.] #報酬の最小値と最大値のリスト
 
+    @retry(delay=1, backoff=1)
     def makeField(self,pattern,init_order):  # make point field . return is tuple of (Row, Column)   // verified
         url = self.local_url + '/start'
         info = {"init_order":init_order,"pattern":pattern}
@@ -46,6 +47,7 @@ class procon18Env_re(gym.Env): #define environment
             self.pf.append(iv_list[i + 3])
         return fs
 
+    @retry(delay=1, backoff=1)
     def init_setPosition(self):
         self._1pos = self.getPosition(1)
         self._2pos = self.getPosition(2)
@@ -53,6 +55,7 @@ class procon18Env_re(gym.Env): #define environment
         self._4pos = self.getPosition(4)
         return [[self._1pos,self._2pos],[self._3pos,self._4pos]]
 
+    @retry(delay=1, backoff=1)
     def reset(self,port=None): # initialization of position,points and steps  (rv is array of position)
         if port is None:
             pass
@@ -94,6 +97,7 @@ class procon18Env_re(gym.Env): #define environment
     def countStep(self):
         self.now_terns += 1
 
+    @retry(delay=1, backoff=1)
     def step(self,action,terns,team): # processing of 1step (rv is observation,reward,done,info)
         observation = []
         if team == 0:
@@ -126,6 +130,7 @@ class procon18Env_re(gym.Env): #define environment
     def _seed(self, seed=None):
         pass
 
+    @retry(delay=1, backoff=1)
     def _get_reward_QL(self,action): # return reward (str)  by q-learning
         if self.now_terns == self.terns: # if final
             if self.judVoL() == "Win_1": #if won
@@ -144,6 +149,7 @@ class procon18Env_re(gym.Env): #define environment
             else:
                 return [p[2],p[2]]
 
+    @retry(delay=1, backoff=1)
     def _get_reward_MCM(self,terns,action):
         p = self.calcPoint()
         if self.now_terns == self.terns:
@@ -174,6 +180,7 @@ class procon18Env_re(gym.Env): #define environment
         else:
             return False
 
+    @retry(delay=1, backoff=1)
     # show で作る list of log  (rv is list)  // verified
     def show(self):
         url = self.local_url + '/show'
@@ -187,12 +194,14 @@ class procon18Env_re(gym.Env): #define environment
             lf.append(l)
         return lf
 
+    @retry(delay=1, backoff=1)
     def calcPoint(self):
         url = self.local_url + '/pointcalc'
         response = requests.post(url).text.encode('utf-8').decode().replace("\n", " ").replace("  "," ")
         iv_list = [int(i) for i in response.split()]
         return iv_list
 
+    @retry(delay=1, backoff=1)
     def judVoL(self): #judge won or lose  str  // verified
         p = self.calcPoint()  # @
         #if p[2] > p[5]: # won friends
@@ -209,6 +218,7 @@ class procon18Env_re(gym.Env): #define environment
         else:
             return "Win_2"
 
+    @retry(delay=1, backoff=1)
     def getPosition(self, usr): #get position (array)  // verified
         data = {
           'usr': str(usr)
@@ -219,6 +229,7 @@ class procon18Env_re(gym.Env): #define environment
         pos_array =[int(i) for i in f.split()]
         return pos_array  # [x(column), y(row)]
 
+    @retry(delay=1, backoff=1)
     def judAc(self, usr, dir,observation):   # judge Actionb   // verified
         data = {
           'usr': str(usr),
@@ -239,6 +250,7 @@ class procon18Env_re(gym.Env): #define environment
         else:
             return True, dir, "move", il
 
+    @retry(delay=1, backoff=1)
     def Move(self, usr, dir): #move agent  // verified
         data = {
           'usr': str(usr),
@@ -247,6 +259,7 @@ class procon18Env_re(gym.Env): #define environment
         url = self.local_url + '/move'
         response = requests.post(url, data=data)
 
+    @retry(delay=1, backoff=1)
     def Remove(self, usr, dir): #remove panels  // verified
         data = {
           'usr': str(usr),
@@ -262,6 +275,32 @@ class procon18Env_re(gym.Env): #define environment
 
         a =  np.array([obs1[1]*12 + obs1[0], obs2[1]*12 + obs2[0]])
         return a  # [int, int]
+
+    @retry(delay=1, backoff=1)
+    def savePField(self):
+        url = self.local_url + '/show/im_field'
+        resp = requests.get(url).text.encode('utf-8').decode().replace("\n", " ").replace("  "," ")
+        li_pfield = [int(i) for i in resp.split()]
+        r_list = []
+        for i in range(14):
+            a = []
+            for j in range(14):
+                a.append(li_pfield[i*14+j])
+            r_list.append(a)
+        return r_list
+
+    @retry(delay=1, backoff=1)
+    def saveUField(self):
+        url = self.local_url + '/show/im_user'
+        resp = requests.get(url).text.encode('utf-8').decode().replace("\n", " ").replace("  "," ")
+        li_ufield = [int(i) for i in resp.split()]
+        r_list = []
+        for i in range(14):
+            a = []
+            for j in range(14):
+                a.append(li_ufield[i*14+j])
+            r_list.append(a)
+        return r_list
 
     def gaStr(self, action): # get action str // verified
         if action == 0:

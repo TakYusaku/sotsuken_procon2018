@@ -31,7 +31,7 @@ if __name__ == '__main__':
     # 学習プラットフォームの選択
     env = gym.make('procon18env_re-v0')
     # 学習回数
-    num_episode = 10#int(info[1])
+    num_episode = int(info[1])
     # 学習率 _q is q learning, _m is mcm
     al_q = info[4]
     al_m = info[5]
@@ -42,6 +42,8 @@ if __name__ == '__main__':
     # read q tables from csv file
     q_table = ts.readQtable(info[8])
     q_table_Enemy = ts.readQtable(info[9])
+    ts.writeQtable(fm, info[8], q_table, 0)
+    ts.writeQtable(fm ,info[9], q_table_Enemy, 0)
     # 学習タイプの選択
     type_f = info[6]
     type_e = info[7]
@@ -52,7 +54,7 @@ if __name__ == '__main__':
     kari_epi = 0
 
     try:
-        for episode in range(10):#num_episode):
+        for episode in range(num_episode):
             kari_epi += 1
             observation = env.reset(int(info[0]))
             terns = env.terns
@@ -125,7 +127,7 @@ if __name__ == '__main__':
                 Win2 += 1
                 print('agent2 won')
 
-            if episode != 0 and episode%2 == 0 and episode!=num_episode-1 :
+            if episode != 0 and episode%250 == 0 and episode!=num_episode-1 : # episode%250 == 0
                 ts.writeQtable(fm, info[8], q_table, episode)
                 ts.writeQtable(fm ,info[9], q_table_Enemy, episode)
                 info_epoch = [epi_processtime[episode],float(Win1/episode),float(Win2/episode),float(sum(f_rr)/episode),float(sum(e_rr)/episode)]
