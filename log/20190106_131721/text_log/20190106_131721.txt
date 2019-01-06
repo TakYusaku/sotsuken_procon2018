@@ -1,0 +1,45 @@
+==================== start ( start time : 20190106_131721 ) ==================== 
+port num is 8002, epoch is 10000, q learning late is 0.001, mcm learning late is 0.001, q learning type is nb, mcm type is nb, qtable of q learning is q_table_QL.csv, qtable of mcm is q_table_MCM.csv .
+-------------------------------------------------- 
+250 epoch finished : avarage time of a epoch is 0:00:02.296811 / WPCT of agent1 is 0.016 , agent2 is 0.988 / avarage of reward1 is 2232.964143426295 , reward2 is 5105.517928286853 .
+500 epoch finished : avarage time of a epoch is 0:00:02.308978 / WPCT of agent1 is 0.014 , agent2 is 0.988 / avarage of reward1 is 2176.1457085828342 , reward2 is 5200.942115768463 .
+750 epoch finished : avarage time of a epoch is 0:00:01.928662 / WPCT of agent1 is 0.010666666666666666 , agent2 is 0.9906666666666667 / avarage of reward1 is 2134.4327563249003 , reward2 is 5302.053262316911 .
+1000 epoch finished : avarage time of a epoch is 0:00:01.903927 / WPCT of agent1 is 0.009 , agent2 is 0.992 / avarage of reward1 is 2138.6253746253747 , reward2 is 5303.581418581419 .
+1250 epoch finished : avarage time of a epoch is 0:00:01.919873 / WPCT of agent1 is 0.008 , agent2 is 0.9928 / avarage of reward1 is 2131.5147881694643 , reward2 is 5316.482014388489 .
+1500 epoch finished : avarage time of a epoch is 0:00:01.975871 / WPCT of agent1 is 0.007333333333333333 , agent2 is 0.9933333333333333 / avarage of reward1 is 2117.5702864756827 , reward2 is 5304.059293804131 .
+1750 epoch finished : avarage time of a epoch is 0:00:02.259288 / WPCT of agent1 is 0.006285714285714286 , agent2 is 0.9942857142857143 / avarage of reward1 is 2103.260422615648 , reward2 is 5291.543118218161 .
+2000 epoch finished : avarage time of a epoch is 0:00:02.138413 / WPCT of agent1 is 0.006 , agent2 is 0.9945 / avarage of reward1 is 2110.2583708145926 , reward2 is 5274.432283858071 .
+2250 epoch finished : avarage time of a epoch is 0:00:01.918476 / WPCT of agent1 is 0.0071111111111111115 , agent2 is 0.9933333333333333 / avarage of reward1 is 2099.442914260329 , reward2 is 5276.018214127054 .
+2500 epoch finished : avarage time of a epoch is 0:00:02.105940 / WPCT of agent1 is 0.0068 , agent2 is 0.9936 / avarage of reward1 is 2096.9424230307877 , reward2 is 5282.264694122351 .
+2750 epoch finished : avarage time of a epoch is 0:00:02.597439 / WPCT of agent1 is 0.006909090909090909 , agent2 is 0.9934545454545455 / avarage of reward1 is 2090.13413304253 , reward2 is 5273.587422755361 .
+3000 epoch finished : avarage time of a epoch is 0:00:02.062220 / WPCT of agent1 is 0.006333333333333333 , agent2 is 0.994 / avarage of reward1 is 2090.2812395868045 , reward2 is 5275.768743752083 .
+3250 epoch finished : avarage time of a epoch is 0:00:02.836702 / WPCT of agent1 is 0.005846153846153846 , agent2 is 0.9944615384615385 / avarage of reward1 is 2088.053521993233 , reward2 is 5274.011381113503 .
+3500 epoch finished : avarage time of a epoch is 0:00:02.049628 / WPCT of agent1 is 0.0054285714285714284 , agent2 is 0.9948571428571429 / avarage of reward1 is 2082.185089974293 , reward2 is 5278.978577549272 .
+3750 epoch finished : avarage time of a epoch is 0:00:02.149222 / WPCT of agent1 is 0.0056 , agent2 is 0.9946666666666667 / avarage of reward1 is 2081.420954412157 , reward2 is 5273.199946680885 .
+4000 epoch finished : avarage time of a epoch is 0:00:01.957975 / WPCT of agent1 is 0.0055 , agent2 is 0.99475 / avarage of reward1 is 2084.974256435891 , reward2 is 5279.376405898525 .
+4250 epoch finished : avarage time of a epoch is 0:00:02.178511 / WPCT of agent1 is 0.005411764705882353 , agent2 is 0.9948235294117647 / avarage of reward1 is 2083.0124676546693 , reward2 is 5299.064220183486 .
+4500 epoch finished : avarage time of a epoch is 0:00:02.065133 / WPCT of agent1 is 0.005111111111111111 , agent2 is 0.9951111111111111 / avarage of reward1 is 2079.6294156854033 , reward2 is 5319.935347700511 .
+4750 epoch finished : avarage time of a epoch is 0:00:01.967244 / WPCT of agent1 is 0.005263157894736842 , agent2 is 0.9949473684210526 / avarage of reward1 is 2079.2481582824666 , reward2 is 5333.257840454641 .
+5000 epoch finished : avarage time of a epoch is 0:00:01.915812 / WPCT of agent1 is 0.005 , agent2 is 0.9952 / avarage of reward1 is 2077.880823835233 , reward2 is 5350.02899420116 .
+5250 epoch finished : avarage time of a epoch is 0:00:01.882591 / WPCT of agent1 is 0.004761904761904762 , agent2 is 0.9954285714285714 / avarage of reward1 is 2079.076366406399 , reward2 is 5367.709769567701 .
+5500 epoch finished : avarage time of a epoch is 0:00:01.928455 / WPCT of agent1 is 0.004545454545454545 , agent2 is 0.9956363636363637 / avarage of reward1 is 2080.491183421196 , reward2 is 5376.69096527904 .
+5750 epoch finished : avarage time of a epoch is 0:00:02.024036 / WPCT of agent1 is 0.004521739130434782 , agent2 is 0.9956521739130435 / avarage of reward1 is 2078.3769779168842 , reward2 is 5382.659711354547 .
+6000 epoch finished : avarage time of a epoch is 0:00:01.970177 / WPCT of agent1 is 0.0045 , agent2 is 0.9956666666666667 / avarage of reward1 is 2078.138643559407 , reward2 is 5400.79536743876 .
+6250 epoch finished : avarage time of a epoch is 0:00:02.025106 / WPCT of agent1 is 0.00448 , agent2 is 0.99568 / avarage of reward1 is 2077.1636538153894 , reward2 is 5410.89489681651 .
+6500 epoch finished : avarage time of a epoch is 0:00:02.004962 / WPCT of agent1 is 0.004461538461538461 , agent2 is 0.9956923076923077 / avarage of reward1 is 2074.1070604522383 , reward2 is 5421.977388094139 .
+6750 epoch finished : avarage time of a epoch is 0:00:02.075200 / WPCT of agent1 is 0.004296296296296296 , agent2 is 0.9958518518518519 / avarage of reward1 is 2076.1592356687897 , reward2 is 5428.999111242779 .
+7000 epoch finished : avarage time of a epoch is 0:00:02.263604 / WPCT of agent1 is 0.004285714285714286 , agent2 is 0.9958571428571429 / avarage of reward1 is 2075.4026567633196 , reward2 is 5439.337094700757 .
+7250 epoch finished : avarage time of a epoch is 0:00:02.043551 / WPCT of agent1 is 0.004137931034482759 , agent2 is 0.996 / avarage of reward1 is 2080.2205213074058 , reward2 is 5452.8045786788025 .
+7500 epoch finished : avarage time of a epoch is 0:00:02.005809 / WPCT of agent1 is 0.004 , agent2 is 0.9961333333333333 / avarage of reward1 is 2080.891881082522 , reward2 is 5463.576856419144 .
+7750 epoch finished : avarage time of a epoch is 0:00:01.979071 / WPCT of agent1 is 0.003870967741935484 , agent2 is 0.9962580645161291 / avarage of reward1 is 2078.384337504838 , reward2 is 5475.48625983744 .
+8000 epoch finished : avarage time of a epoch is 0:00:01.943028 / WPCT of agent1 is 0.00375 , agent2 is 0.996375 / avarage of reward1 is 2076.191226096738 , reward2 is 5484.15423072116 .
+8250 epoch finished : avarage time of a epoch is 0:00:02.135705 / WPCT of agent1 is 0.0036363636363636364 , agent2 is 0.9964848484848485 / avarage of reward1 is 2077.4189795176344 , reward2 is 5493.525512059145 .
+8500 epoch finished : avarage time of a epoch is 0:00:02.026331 / WPCT of agent1 is 0.0035294117647058825 , agent2 is 0.9965882352941177 / avarage of reward1 is 2076.7134454770026 , reward2 is 5500.956946241618 .
+8750 epoch finished : avarage time of a epoch is 0:00:01.985788 / WPCT of agent1 is 0.0034285714285714284 , agent2 is 0.9966857142857143 / avarage of reward1 is 2076.3620157696264 , reward2 is 5504.419266369558 .
+9000 epoch finished : avarage time of a epoch is 0:00:01.961097 / WPCT of agent1 is 0.0033333333333333335 , agent2 is 0.9967777777777778 / avarage of reward1 is 2075.3506277080323 , reward2 is 5507.829574491723 .
+9250 epoch finished : avarage time of a epoch is 0:00:01.997624 / WPCT of agent1 is 0.0033513513513513515 , agent2 is 0.9967567567567568 / avarage of reward1 is 2074.3622311101503 , reward2 is 5516.385039455194 .
+9500 epoch finished : avarage time of a epoch is 0:00:01.850819 / WPCT of agent1 is 0.003263157894736842 , agent2 is 0.9968421052631579 / avarage of reward1 is 2074.053257551837 , reward2 is 5528.477949689506 .
+9750 epoch finished : avarage time of a epoch is 0:00:01.975381 / WPCT of agent1 is 0.003282051282051282 , agent2 is 0.9968205128205129 / avarage of reward1 is 2073.653984206748 , reward2 is 5534.659009332376 .
+successfuly! : runtime is 5:47:44.826914 
+agent1 won : 32 , agent2 won : 9968/ WPCT of agent1 is 0.0032 , agent2 is 0.9968 / avarage of reward1 is 2075.7739 , reward2 is 5540.0314 .
+==================== finished *successfuly* ( finished time : 20190106_190506 ) ==================== 

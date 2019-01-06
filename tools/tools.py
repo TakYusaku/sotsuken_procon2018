@@ -71,8 +71,8 @@ def Log(fm, when,info=None,epoch=None):
         m = m1 + m2
         f.write(m)
         f.close()
-    elif when is "now learning":
-        m1 = str(epoch) + "epoch finished : " + "avarage time of a epoch is " + str(info[0]) + " / WPCT of agent1 is " + str(info[1]) + " , agent2 is " + str(info[2]) + " / avarage of reward1 is " + str(info[3]) + " , reward2 is " + str(info[4]) + " .\n"
+    elif when == "now learning":
+        m1 = str(epoch) + " epoch finished : " + "avarage time of a epoch is " + str(info[0]) + " / WPCT of agent1 is " + str(info[1]) + " , agent2 is " + str(info[2]) + " / avarage of reward1 is " + str(info[3]) + " , reward2 is " + str(info[4]) + " .\n"
         f.write(m1)
         f.close()
     elif epoch is None and when is "finished":
@@ -137,10 +137,12 @@ def saveField(env, fm, epoch, turn):
         writer = csv.writer(file, lineterminator='\n')
         writer.writerows(uf_a)
 
-def saveImage(fm,s,f_rr,e_rr,episode):
+def saveImage(fm,s,f_rr,e_rr,s_avg,f_rr_avg,e_rr_avg,episode):
     plt.figure()
-    plt.plot(s[2], 'r', label="QL")
-    plt.plot(s[5], 'b', label="MCM")
+    plt.plot(s[2], 'r', label="QL",alpha=0.2)
+    plt.plot(s[5], 'b', label="MCM",alpha=0.2)
+    plt.plot(s_avg[2], 'r', label="QL avg")
+    plt.plot(s_avg[5], 'b', label="MCM avg")
     plt.xlim(0, episode)
     plt.ylim(min(min(s[2]),min(s[5]))-50, max(max(s[2]),max(s[5]))+50)
     plt.xlabel("epoch")
@@ -151,8 +153,10 @@ def saveImage(fm,s,f_rr,e_rr,episode):
     plt.close()
 
     plt.figure()
-    plt.plot(s[0], 'r', label="QL")
-    plt.plot(s[3], 'b', label="MCM")
+    plt.plot(s[0], 'r', label="QL",alpha=0.2)
+    plt.plot(s[3], 'b', label="MCM",alpha=0.2)
+    plt.plot(s_avg[0], 'r', label="QL avg")
+    plt.plot(s_avg[3], 'b', label="MCM avg")
     plt.xlim(0, episode)
     plt.ylim(min(min(s[0]),min(s[3]))-50, max(max(s[0]),max(s[3]))+50)
     plt.xlabel("epoch")
@@ -163,10 +167,12 @@ def saveImage(fm,s,f_rr,e_rr,episode):
     plt.close()
 
     plt.figure()
-    plt.plot(s[1], 'r', label="QL")
-    plt.plot(s[4], 'b', label="MCM")
+    plt.plot(s[4], 'b', label="MCM",alpha=0.2)
+    plt.plot(s[1], 'r', label="QL", alpha=0.2)
+    plt.plot(s_avg[4], 'b', label="MCM avg")
+    plt.plot(s_avg[1], 'r', label="QL avg")
     plt.xlim(0, episode)
-    plt.ylim(min(min(s[1]),min(s[4]))-50, max(max(s[1]),max(s[4]))+50)
+    plt.ylim(min(min(s[1]),min(s[4]))-150, max(max(s[1]),max(s[4]))+50)
     plt.xlabel("epoch")
     plt.ylabel("fieldpoint")
     plt.legend(loc='lower right')
@@ -175,8 +181,10 @@ def saveImage(fm,s,f_rr,e_rr,episode):
     plt.close()
 
     plt.figure()
-    plt.plot(f_rr, 'r', label="QL")
-    plt.plot(e_rr, 'b', label="MCM")
+    plt.plot(f_rr, 'r', label="QL",alpha=0.2)
+    plt.plot(e_rr, 'b', label="MCM",alpha=0.2)
+    plt.plot(f_rr_avg, 'r', label="QL avg")
+    plt.plot(e_rr_avg, 'b', label="MCM avg")
     plt.xlim(0, episode)
     plt.ylim(min(min(f_rr),min(e_rr))-50, max(max(f_rr),max(e_rr))+50)
     plt.xlabel("epoch")

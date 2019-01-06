@@ -78,43 +78,44 @@ def getAction(env, q_table, observation, episode,type):
     epsilon = 0.5 * (1 / (episode + 1))
     a = []
     b = False
-    while True:
-        for i in range(2):
-            if np.random.uniform(0, 1) > epsilon:  # e-greedy low is off
-                x = np.argsort(q_table[obs[i]])[::-1]
-                if type == "nb" or type == "ob":
-                    b = False
-                    c = 0
-                    while b!=True:
-                        b, d, ms, next_pos = env.judAc(i+1, x[c], observation[i])
-                        if type == "nb":
-                            lv = env.show()
-                            try:
-                                if lv[next_pos[0],next_pos[1]] == 5 or lv[next_pos[0],next_pos[1]] == 1 or lv[next_pos[0],next_pos[1]] == 2:
-                                    b = False
-                                else:
-                                    pass
-                            except:
-                                pass
-                        else:
-                            pass
-                        c += 1
-                elif type == "oof":
-                    b, d, ms, next_pos = env.judAc(i+1, x[0], observation[i])
-
-                a.append([d, ms, next_pos])
-
-            else: # e-greedy low is on
+    #while True:
+    for i in range(2):
+        if np.random.uniform(0, 1) > epsilon:  # e-greedy low is off
+            x = np.argsort(q_table[obs[i]])[::-1]
+            if type == "nb" or type == "ob":
                 b = False
+                c = 0
                 while b!=True:
-                    pa = np.random.choice([0, 1, 2, 3, 4, 5, 6, 7, 8])
-                    b, d, ms, next_pos = env.judAc(i+1, pa,observation[i])
-                    if type == "oof":
-                        b = True
-                a.append([d, ms, next_pos])
+                    b, d, ms, next_pos = env.judAc(i+1, x[c], observation[i])
+                    if type == "nb":
+                        lv = env.show()
+                        try:
+                            if lv[next_pos[0],next_pos[1]] == 5 or lv[next_pos[0],next_pos[1]] == 1 or lv[next_pos[0],next_pos[1]] == 2:
+                                b = False
+                            else:
+                                pass
+                        except:
+                            pass
+                    else:
+                        pass
+                    c += 1
+            elif type == "oof":
+                b, d, ms, next_pos = env.judAc(i+1, x[0], observation[i])
+
+            a.append([d, ms, next_pos])
+
+        else: # e-greedy low is on
+            b = False
+            while b!=True:
+                pa = np.random.choice([0, 1, 2, 3, 4, 5, 6, 7, 8])
+                b, d, ms, next_pos = env.judAc(i+1, pa,observation[i])
+                if type == "oof":
+                    b = True
+            a.append([d, ms, next_pos])
+        """
         if a[0][2] == a[1][2]:
             a = []
         else:
             break
-
+        """
     return a  # [int, str, list]
