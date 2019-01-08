@@ -86,7 +86,18 @@ def saveUField():
     li_ufield = [int(i) for i in resp.split()]
     return li_ufield
 
-if __name__ == "__main__":
+def fun(usr,dir):
+    data = {
+        'usr': str(usr),
+        'd': dir
+    }
+    url = 'http://localhost:8002/judgedirection'
+    f = requests.post(url, data = data).text.encode('utf-8').decode().replace("\n", " ").replace("  "," ")
+    iv_list = [i for i in f.split()]
+    il = [int(iv_list[0]),int(iv_list[1])]
+    return iv_list
+
+def main():
     p = random.choice([[0,1,2,3,4],[0,3,4,1,2],[1,1,3,2,4],[1,3,1,4,2],[2,1,3,4,2],[2,3,1,2,4]])
     pattern = p[0]
     p.pop(0)
@@ -95,5 +106,9 @@ if __name__ == "__main__":
     info = {"init_order":init_order,"pattern":pattern}
     response = requests.post('http://localhost:8002/start', data=info)
 
-    print(savePField())
-    print(saveUField())
+    print(init_order)
+
+if __name__ == "__main__":
+    #main()
+    a = fun(1,"r")
+    print(a)

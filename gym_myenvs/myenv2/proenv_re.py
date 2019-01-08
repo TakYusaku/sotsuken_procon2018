@@ -238,7 +238,7 @@ class procon18Env_re(gym.Env): #define environment
         url = self.local_url + '/judgedirection'
         f = requests.post(url, data = data).text.encode('utf-8').decode().replace("\n", " ").replace("  "," ")
         iv_list = [i for i in f.split()]
-        il = [int(iv_list[0]),int(iv_list[1])]
+        il = [int(iv_list[1]),int(iv_list[0])]
 
         if iv_list[2] == "Error":
             return False, dir, "oof", il
@@ -248,7 +248,10 @@ class procon18Env_re(gym.Env): #define environment
             else:
                 return True, dir, "remove", il
         else:
-            return True, dir, "move", il
+            if dir == 4:
+                return True, 4, "stay", il
+            else:
+                return True, dir, "move", il
 
     @retry(delay=1, backoff=1)
     def Move(self, usr, dir): #move agent  // verified

@@ -1,5 +1,6 @@
 # learning agent by Monte Carlo method
 
+# nb ならば 
 import gym
 import requests
 import numpy as np
@@ -10,42 +11,54 @@ import time
 import threading
 #import # 敵のデータ
 
-def getAction(env, q_table, observation, episode,type): # get action (array)  # フィールド外は再計算
-    #epsilon = 0.5 * (1 / (episode + 1))
+def getAction(env, q_table, observation, episode,type): # get action (array)  # フィールド外は罰金
+    epsilon = 0.5 * (1 / (episode + 1))
     obs = env.getStatus(observation)
-    epsilon = 0.5
+    #epsilon = 0.5
     a = []
-    b = False
+    while True:
+        for i in range(2):
+            if np.random.uniform(0, 1) > epsilon:  # e-greedy low is off
+                x = np.argsort(q_table[obs[i]])[::-1]
+                c = 0
+                while True:
+                    b, d, ms, next_pos = env.judAc(i+3, x[c], observation[i])
+                    if type == "nb":
+                        lv = env.show()
+                        try:
+                            if b and ms=="move" and (lv[next_pos[0]][next_pos[1]] == 6 or lv[next_pos[0]][next_pos[1]] == 3 or lv[next_pos[0]][next_pos[1]] == 4):
+                                c += 1
+                            else:
+                                a.append([d, ms, next_pos])
+                                break
+                        except:
+                            c += 1
+                    elif type == "ob":
+                        a.append([d, ms, next_pos])
+                        break
 
-    for i in range(2):
-        if np.random.uniform(0, 1) > epsilon:  # e-greedy low is off
-            x = np.argsort(q_table[obs[i]])[::-1]
-            b = False
-            c = 0
-            while b!=True:
-                b, d, ms, next_pos = env.judAc(i+3, x[c], observation[i])
-                if type == "nb":
+            else: # e-greedy low is on
+                while True:
+                    pa = np.random.choice([0, 1, 2, 3, 4, 5, 6, 7, 8])
+                    b, d, ms, next_pos = env.judAc(i+3, pa, observation[i])
                     lv = env.show()
-                    try:
-                        if lv[next_pos[0],next_pos[1]] == 6 or lv[next_pos[0],next_pos[1]] == 3 or lv[next_pos[0],next_pos[1]] == 4:
-                            c += 1
-                            b = False
-                        else:
-                            c += 1
-                    except:
-                        c += 1
-                else:
-                    b = True
-            a.append([d, ms, next_pos])
-
-        else: # e-greedy low is on
-            b = False
-            while b!=True:
-                pa = np.random.choice([0, 1, 2, 3, 4, 5, 6, 7, 8])
-                b, d, ms, next_pos = env.judAc(i+3, pa, observation[i])
-                if type != "nb":
-                    b = True
-            a.append([d, ms, next_pos])
+                    if type == "nb":
+                        try:
+                            if b and ms=="move" and (lv[next_pos[0]][next_pos[1]] == 6 or lv[next_pos[0]][next_pos[1]] == 3 or lv[next_pos[0]][next_pos[1]] == 4):
+                                    pass
+                            else:
+                                a.append([d, ms, next_pos])
+                                break
+                        except:
+                            pass
+                    elif type == "ob":
+                        a.append([d, ms, next_pos])
+                        break
+        
+        if a[0][2] == a[1][2]: # "nb" , "ob" 関わらず味方同士の行き先がかぶっていたら再計算
+            a = []
+        else:
+            break
 
     return a  # [[int(direction), str(movement), list(next position)],[]]
 """
