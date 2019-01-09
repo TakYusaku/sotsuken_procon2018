@@ -33,7 +33,7 @@ def init_func(fm):
     os.mkdir(mkdi)
 
 def readQtable(type):
-    fn = './log/' + type
+    fn = './hyperpalam_list/' + type
     with open(fn, 'r') as file:
         lst = list(csv.reader(file))
     a = []

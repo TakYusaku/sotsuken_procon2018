@@ -18,7 +18,7 @@ if options == "zeros":
 elif options == "random":
     q_table = np.random.rand(144,9)
 
-fn = '../log/q_table_' + sys.argv[2] + '.csv'
+fn = '../hyperpalam_list/q_table_' + sys.argv[2] + '.csv'
 with open(fn, 'w') as file:
     writer = csv.writer(file, lineterminator='\n')
     writer.writerows(q_table)

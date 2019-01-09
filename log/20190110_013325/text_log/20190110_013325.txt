@@ -1,0 +1,14 @@
+==================== start ( start time : 20190110_013325 ) ==================== 
+port num is 8002, epoch is 10, q learning late is 0.001, mcm learning late is 0.001, q learning type is nb, mcm type is nb, qtable of q learning is q_table_QL.csv, qtable of mcm is q_table_MCM.csv .
+-------------------------------------------------- 
+1 epoch finished : avarage time of a epoch is 0:00:01.979629 / WPCT of agent1 is 2.0 , agent2 is 0.0 / avarage of reward1 is 4458.75 , reward2 is 23.75 .
+2 epoch finished : avarage time of a epoch is 0:00:02.055744 / WPCT of agent1 is 1.5 , agent2 is 0.0 / avarage of reward1 is 4704.333333333333 , reward2 is -407.5 .
+3 epoch finished : avarage time of a epoch is 0:00:01.946357 / WPCT of agent1 is 1.3333333333333333 , agent2 is 0.0 / avarage of reward1 is 4797.625 , reward2 is -682.875 .
+4 epoch finished : avarage time of a epoch is 0:00:01.783034 / WPCT of agent1 is 1.25 , agent2 is 0.0 / avarage of reward1 is 4145.4 , reward2 is -904.9 .
+5 epoch finished : avarage time of a epoch is 0:00:02.380869 / WPCT of agent1 is 1.0 , agent2 is 0.2 / avarage of reward1 is 3630.1666666666665 , reward2 is -383.75 .
+6 epoch finished : avarage time of a epoch is 0:00:02.140273 / WPCT of agent1 is 0.8333333333333334 , agent2 is 0.3333333333333333 / avarage of reward1 is 3583.1428571428573 , reward2 is -418.2857142857143 .
+7 epoch finished : avarage time of a epoch is 0:00:02.079573 / WPCT of agent1 is 0.8571428571428571 , agent2 is 0.2857142857142857 / avarage of reward1 is 3644.375 , reward2 is -19.0625 .
+8 epoch finished : avarage time of a epoch is 0:00:02.562368 / WPCT of agent1 is 0.875 , agent2 is 0.25 / avarage of reward1 is 3544.777777777778 , reward2 is 104.94444444444444 .
+successfuly! : runtime is 0:00:29.386381 
+agent1 won : 7 , agent2 won : 3/ WPCT of agent1 is 0.7 , agent2 is 0.3 / avarage of reward1 is 3251.65 , reward2 is 310.05 .
+==================== finished *successfuly* ( finished time : 20190110_013354 ) ==================== 
