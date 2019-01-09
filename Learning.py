@@ -78,7 +78,7 @@ if __name__ == '__main__':
             """
 
             for i in range(terns):
-                ts.saveField(env, fm, episode, i)
+                #ts.saveField(env, fm, episode, i)
                 env.countStep() # epoch num のカウント
                 # 状態の取得
                 ob_f = env.getStatus(observation[0])
