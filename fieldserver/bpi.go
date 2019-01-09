@@ -141,77 +141,34 @@ func StartServer(w http.ResponseWriter, r *http.Request) {
 }
 
 func MoveServer(w http.ResponseWriter, r *http.Request) {
-    // fmt.Fprintf(w, "move\n") yusaku
-    r.ParseForm()
-    //curl -X POST localhost:8001/move -d "usr=1&d=right"
-    u,_:=strconv.Atoi(r.FormValue("usr"))
-    fmt.Println(u)
-    fmt.Println(r.FormValue("d"))
-    //d:=r.FormValue("d")
-    d:=strings.Split(r.FormValue("d"), "")
-    if(d[0]=="z"){
-      pcount[u]++
-      return
-    }
-    /*
-    for i:=0; i<len(d); i++{
-      if d[i]=="r"{p[u]["y"]++
-      }else if d[i]=="l"{p[u]["y"]--
-      }else if d[i]=="u"{p[u]["x"]--
-      }else if d[i]=="d"{p[u]["x"]++}
-    }
-    */
-    tmp_px:=p[init_order[u-1]]["x"]
-    tmp_py:=p[init_order[u-1]]["y"]
-    for i:=0; i<len(d); i++{
-      if d[i]=="r"{tmp_py++
-      }else if d[i]=="l"{tmp_py--
-      }else if d[i]=="u"{tmp_px--
-      }else if d[i]=="d"{tmp_px++}
-    }
-    if 0<=tmp_px && tmp_px<length && 0<=tmp_py && tmp_py<width {
-      if u==1||u==2 {
-        if user[tmp_px][tmp_py]==0 || user[tmp_px][tmp_py]==5 {
-          user[p[init_order[u-1]]["x"]][p[init_order[u-1]]["y"]]=5
-        }else{
-          fmt.Fprintf(w,"is_panel \n")  // ;;;
-          return
-        }
-      }else{
-        if user[tmp_px][tmp_py]==0 || user[tmp_px][tmp_py]==6 {
-          user[p[init_order[u-1]]["x"]][p[init_order[u-1]]["y"]]=6
-        }else{
-          fmt.Fprintf(w,"is_panel \n")  // ;;;
-          return
-        }
-      }
-      p[init_order[u-1]]["x"]=tmp_px
-      p[init_order[u-1]]["y"]=tmp_py
-    }else{  // out of field
-      fmt.Fprintf(w,"Error \n")  // ;;;
-      return
-    }
-    user[p[init_order[u-1]]["x"]][p[init_order[u-1]]["y"]]=u
-    pcount[u]++
-    if(pcount[1]==pcount[2]&&pcount[2]==pcount[3]&&pcount[3]==pcount[4]){
-      pcount[0]=pcount[1]
-      fmt.Fprintf(w,"%d ",pcount[0])
-    }
-    if(turn==pcount[0]){
-      fmt.Fprintf(w,"end the game \n")
-    }
-}
-
-func RemoveServer(w http.ResponseWriter, r *http.Request) {
-  // fmt.Fprintf(w, "remove\n") yusaku
+  // fmt.Fprintf(w, "move\n") yusaku
   r.ParseForm()
-  //curl -X POST localhost:8001/move -d "usr=1&d=right"
+  //curl -X POST localhost:8002/move -d "usr=1&d=right"
   u,_:=strconv.Atoi(r.FormValue("usr"))
   fmt.Println(u)
   fmt.Println(r.FormValue("d"))
+  //d:=r.FormValue("d")
   d:=strings.Split(r.FormValue("d"), "")
-  tmp_px:=p[init_order[u-1]]["x"]
-  tmp_py:=p[init_order[u-1]]["y"]
+  if(d[0]=="z"){
+    pcount[u]++
+    return
+  }
+  a:=0
+  for i:=0; i<4; i++{
+    if (u==init_order[i]){
+      a = i+1
+    }
+  }
+  /*
+  for i:=0; i<len(d); i++{
+    if d[i]=="r"{p[u]["y"]++
+    }else if d[i]=="l"{p[u]["y"]--
+    }else if d[i]=="u"{p[u]["x"]--
+    }else if d[i]=="d"{p[u]["x"]++}
+  }
+  */
+  tmp_px:=p[a]["x"]
+  tmp_py:=p[a]["y"]
   for i:=0; i<len(d); i++{
     if d[i]=="r"{tmp_py++
     }else if d[i]=="l"{tmp_py--
@@ -219,13 +176,29 @@ func RemoveServer(w http.ResponseWriter, r *http.Request) {
     }else if d[i]=="d"{tmp_px++}
   }
   if 0<=tmp_px && tmp_px<length && 0<=tmp_py && tmp_py<width {
-    if user[tmp_px][tmp_py]!=1&&user[tmp_px][tmp_py]!=2&&user[tmp_px][tmp_py]!=3&&user[tmp_px][tmp_py]!=4 {user[tmp_px][tmp_py]=0}
-  }else{
-    fmt.Fprintf(w,"Error \n")
+    if u==1||u==2 {
+      if user[tmp_px][tmp_py]==0 || user[tmp_px][tmp_py]==5 {
+        user[p[a]["x"]][p[a]["y"]]=5
+      }else{
+        fmt.Fprintf(w,"is_panel \n")  // ;;;
+        return
+      }
+    }else{
+      if user[tmp_px][tmp_py]==0 || user[tmp_px][tmp_py]==6 {
+        user[p[a]["x"]][p[a]["y"]]=6
+      }else{
+        fmt.Fprintf(w,"is_panel \n")  // ;;;
+        return
+      }
+    }
+    p[a]["x"]=tmp_px
+    p[a]["y"]=tmp_py
+  }else{  // out of field
+    fmt.Fprintf(w,"Error \n")  // ;;;
     return
   }
-
-  pcount[u]++
+  user[p[a]["x"]][p[a]["y"]]=u
+  pcount[a]++
   if(pcount[1]==pcount[2]&&pcount[2]==pcount[3]&&pcount[3]==pcount[4]){
     pcount[0]=pcount[1]
     fmt.Fprintf(w,"%d ",pcount[0])
@@ -233,6 +206,45 @@ func RemoveServer(w http.ResponseWriter, r *http.Request) {
   if(turn==pcount[0]){
     fmt.Fprintf(w,"end the game \n")
   }
+}
+
+func RemoveServer(w http.ResponseWriter, r *http.Request) {
+// fmt.Fprintf(w, "remove\n") yusaku
+r.ParseForm()
+//curl -X POST localhost:8002/move -d "usr=1&d=right"
+u,_:=strconv.Atoi(r.FormValue("usr"))
+fmt.Println(u)
+fmt.Println(r.FormValue("d"))
+d:=strings.Split(r.FormValue("d"), "")
+a:=0
+for i:=0; i<4; i++{
+  if (u==init_order[i]){
+    a = i+1
+  }
+}
+tmp_px:=p[a]["x"]
+tmp_py:=p[a]["y"]
+for i:=0; i<len(d); i++{
+  if d[i]=="r"{tmp_py++
+  }else if d[i]=="l"{tmp_py--
+  }else if d[i]=="u"{tmp_px--
+  }else if d[i]=="d"{tmp_px++}
+}
+if 0<=tmp_px && tmp_px<length && 0<=tmp_py && tmp_py<width {
+  if user[tmp_px][tmp_py]!=1&&user[tmp_px][tmp_py]!=2&&user[tmp_px][tmp_py]!=3&&user[tmp_px][tmp_py]!=4 {user[tmp_px][tmp_py]=0}
+}else{
+  fmt.Fprintf(w,"Error \n")
+  return
+}
+
+pcount[a]++
+if(pcount[1]==pcount[2]&&pcount[2]==pcount[3]&&pcount[3]==pcount[4]){
+  pcount[0]=pcount[1]
+  fmt.Fprintf(w,"%d ",pcount[0])
+}
+if(turn==pcount[0]){
+  fmt.Fprintf(w,"end the game \n")
+}
 }
 
 func ShowServer(w http.ResponseWriter, r *http.Request) {
