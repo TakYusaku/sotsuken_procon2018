@@ -23,6 +23,8 @@ def init_func(fm):
     os.mkdir(mkdi)
     mkdi = './log/' + fm + '/images/result_reward'
     os.mkdir(mkdi)
+    mkdi = './log/' + fm + '/images/result_reward_onestep'
+    os.mkdir(mkdi)
     mkdi = './log/' + fm + '/im_field'
     os.mkdir(mkdi)
     mkdi = './log/' + fm + '/im_field/point'
@@ -137,7 +139,7 @@ def saveField(env, fm, epoch, turn):
         writer = csv.writer(file, lineterminator='\n')
         writer.writerows(uf_a)
 
-def saveImage(fm,s,f_rr,e_rr,s_avg,f_rr_avg,e_rr_avg,episode):
+def saveImage(fm,s,f_rr,e_rr,s_avg,f_rr_avg,e_rr_avg,f_rr_oneTurn,e_rr_oneTurn,f_rr_oneTurn_avg,e_rr_oneTurn_avg,episode):
     plt.figure()
     plt.plot(s[2], 'r', label="QL",alpha=0.2)
     plt.plot(s[5], 'b', label="MCM",alpha=0.2)
@@ -172,7 +174,7 @@ def saveImage(fm,s,f_rr,e_rr,s_avg,f_rr_avg,e_rr_avg,episode):
     plt.plot(s_avg[4], 'b', label="MCM avg")
     plt.plot(s_avg[1], 'r', label="QL avg")
     plt.xlim(0, episode)
-    plt.ylim(min(min(s[1]),min(s[4]))-150, max(max(s[1]),max(s[4]))+50)
+    plt.ylim(min(min(s[1]),min(s[4]))-50, max(max(s[1]),max(s[4]))+50)
     plt.xlabel("epoch")
     plt.ylabel("fieldpoint")
     plt.legend(loc='lower right')
@@ -191,6 +193,20 @@ def saveImage(fm,s,f_rr,e_rr,s_avg,f_rr_avg,e_rr_avg,episode):
     plt.ylabel("reward")
     plt.legend(loc='lower right')
     fn4 = './log/' + fm + '/images/result_reward/result_reward_' + str(episode) + '.png'
+    plt.savefig(fn4)
+    plt.close()
+
+    plt.figure()
+    plt.plot(f_rr_oneTurn, 'r', label="QL",alpha=0.2)
+    plt.plot(e_rr_oneTurn, 'b', label="MCM",alpha=0.2)
+    plt.plot(f_rr_oneTurn_avg, 'r', label="QL avg")
+    plt.plot(e_rr_oneTurn_avg, 'b', label="MCM avg")
+    plt.xlim(0, episode)
+    plt.ylim(min(min(f_rr_oneTurn),min(e_rr_oneTurn))-50, max(max(f_rr_oneTurn),max(e_rr_oneTurn))+50)
+    plt.xlabel("epoch")
+    plt.ylabel("reward per one step")
+    plt.legend(loc='lower right')
+    fn4 = './log/' + fm + '/images/result_reward_onestep/result_reward_onestep' + str(episode) + '.png'
     plt.savefig(fn4)
     plt.close()
 

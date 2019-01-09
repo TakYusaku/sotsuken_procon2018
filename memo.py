@@ -109,6 +109,11 @@ def main():
     print(init_order)
 
 if __name__ == "__main__":
-    #main()
-    a = fun(1,"r")
-    print(a)
+    main()
+    #a = fun(1,"r")
+    #print(a)
+    #a = []
+    #b = ''
+    #for i in range(len(a)):
+    #    b += a[i]
+    #print(b)

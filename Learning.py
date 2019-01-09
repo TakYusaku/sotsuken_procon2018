@@ -52,6 +52,10 @@ if __name__ == '__main__':
     e_rr = [] # 敵の各エピソードの報酬
     f_rr_avg = [] # 味方の各エピソードの報酬 avg
     e_rr_avg = [] # 敵の各エピソードの報酬 avg
+    f_rr_oneTurn = [] # 味方の1ターンあたりの報酬
+    e_rr_oneTurn = [] # 敵の各1ターンあたりの報酬
+    f_rr_oneTurn_avg = [] # 味方の1ターンあたりの報酬 avg
+    e_rr_oneTurn_avg = [] # 敵の各1ターンあたりの報酬 avg
     s = [[],[],[],[],[],[]] #[[friend_tile],[friend_field],[friend_total],[enemy_tile],[enemy_field],[enemy_total]] 獲得ポイント
     s_avg = [[],[],[],[],[],[]] # sの平均
     epi_processtime = []
@@ -116,8 +120,12 @@ if __name__ == '__main__':
             # 1 epoch の報酬の記録
             f_rr.append(total_reward_f)
             e_rr.append(total_reward_e)
-            f_rr_avg.append(mean(f_rr))
+            f_rr_avg.append(mean(f_rr)) # 現在までの報酬の平均
             e_rr_avg.append(mean(e_rr))
+            f_rr_oneTurn.append(int(total_reward_f/terns)) # 1ターンあたりの報酬
+            e_rr_oneTurn.append(int(total_reward_e/terns))
+            f_rr_oneTurn_avg.append(mean(f_rr_oneTurn)) # 1ターンあたりの報酬の平均
+            e_rr_oneTurn_avg.append(mean(e_rr_oneTurn))
             # 1ゲームのポイントの記録
             s_p = env.calcPoint()
             s[0].append(s_p[0])
@@ -140,12 +148,12 @@ if __name__ == '__main__':
                 Win2 += 1
                 print('agent2 won')
 
-            if episode != 0 and episode%250 == 0 and episode!=num_episode-1 : # episode%250 == 0
+            if episode != 0 and episode%1 == 0 and episode!=num_episode-1 : # episode%250 == 0
                 ts.writeQtable(fm, info[8], q_table, episode+1)
                 ts.writeQtable(fm ,info[9], q_table_Enemy, episode+1)
                 info_epoch = [epi_processtime[episode],float(Win1/episode),float(Win2/episode),mean(f_rr),mean(e_rr)]
                 ts.Log(fm,"now learning",info_epoch,episode)
-                ts.saveImage(fm,s,f_rr,e_rr,s_avg,f_rr_avg,e_rr_avg,episode)
+                ts.saveImage(fm,s,f_rr,e_rr,s_avg,f_rr_avg,e_rr_avg,f_rr_oneTurn,e_rr_oneTurn,f_rr_oneTurn_avg,e_rr_oneTurn_avg,episode)
 
         # 学習終了後の後処理
         le_delta,fs,now = ts.getTime("timestamp_on",le_start) # 総実行時間の記録
@@ -162,7 +170,7 @@ if __name__ == '__main__':
 
         info_finished = [Win1,Win2,float(Win1/num_episode),float(Win2/num_episode),mean(f_rr),mean(e_rr),fs,le_delta]
         ts.Log(fm,"finished",info_finished)
-        ts.saveImage(fm,s,f_rr,e_rr,s_avg,f_rr_avg,e_rr_avg,num_episode)
+        ts.saveImage(fm,s,f_rr,e_rr,s_avg,f_rr_avg,e_rr_avg,f_rr_oneTurn,e_rr_oneTurn,f_rr_oneTurn_avg,e_rr_oneTurn_avg,num_episode)
     except:
         m = str(sys.exc_info())
         le_delta,fs,now = ts.getTime("timestamp_on",le_start) # 総実行時間の記録
@@ -184,4 +192,4 @@ if __name__ == '__main__':
         print(w2)
         m = "finished time is " + str(now)
         print(m)
-        ts.saveImage(fm,s,f_rr,e_rr,s_avg,f_rr_avg,e_rr_avg,kari_epi)
+        ts.saveImage(fm,s,f_rr,e_rr,s_avg,f_rr_avg,e_rr_avg,f_rr_oneTurn,e_rr_oneTurn,f_rr_oneTurn_avg,e_rr_oneTurn_avg,kari_epi)
