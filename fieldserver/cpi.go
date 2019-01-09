@@ -20,6 +20,8 @@ var field=make([][]int,12)
 
 var user_oot=make([][]int,14)
 var field_oot=make([][]int,14)
+//var u_ot=make([][]int,length)
+//var u_tf=make([][]int,length)
 // var pcalc=make([][]int,12)
 // var field_t=make([][]int,14)
 
@@ -104,6 +106,51 @@ func retConvUField(w http.ResponseWriter, r *http.Request){
     fmt.Fprintf(w,"\n")
   }
 }
+
+//////////////////////////////////////////////////////////////////
+/// DQN のために新しく追加した部分
+
+func retPointField(w http.ResponseWriter, r *http.Request){
+  for i:=0; i<length; i++{
+    for j:=0; j<width; j++ {
+      fmt.Fprintf(w,"%d ",field[i][j])
+    }
+    fmt.Fprintf(w,"\n")
+  }
+}
+
+func retUserField(w http.ResponseWriter, r *http.Request){
+  var u_ot=make([][]int,length)
+  var u_tf=make([][]int,length)
+
+  for i:=0; i<length; i++{
+    u_ot[i]=make([]int,width)
+    u_tf[i]=make([]int,width)
+    for j:=0; j<width; j++{
+      if (user[i][j]==1 || user[i][j]==2 || user[i][j]==5){
+        u_ot[i][j] = 1
+      }else if (user[i][j]==3 || user[i][j]==4 || user[i][j]==6){
+        u_tf[i][j] = 1
+      }
+    }
+  }
+  for i:=0; i<length; i++{
+    for j:=0; j<width; j++{
+      fmt.Fprintf(w,"%d ",u_ot[i][j])
+    }
+    fmt.Fprintf(w,"\n")
+  }
+  for i:=0; i<length; i++{
+    for j:=0; j<width; j++{
+      fmt.Fprintf(w,"%d ",u_tf[i][j])
+    }
+    fmt.Fprintf(w,"\n")
+  }
+
+}
+
+//////////////////////////////////////////////////////////////////
+
 /*
 func retServer(w http.ResponseWriter, r *http.Request){
   length=11
@@ -240,6 +287,12 @@ func StartServer(w http.ResponseWriter, r *http.Request) {
       user_oot[i]=make([]int, 14)
       field_oot[i]=make([]int, 14)
     }
+    /*
+    for i:=0; i<length; i++{
+      u_ot[i]=make([]int,width)
+      u_tf[i]=make([]int,width)
+    }
+    */
     // ターン数,縦横の選定
     turn_num:=0
     turn=turn_pat[turn_num]
@@ -306,6 +359,12 @@ func MoveServer(w http.ResponseWriter, r *http.Request) {
       pcount[u]++
       return
     }
+    a:=0
+    for i:=0; i<4; i++{
+      if (u==init_order[i]){
+        a = i+1
+      }
+    }
     /*
     for i:=0; i<len(d); i++{
       if d[i]=="r"{p[u]["y"]++
@@ -314,8 +373,8 @@ func MoveServer(w http.ResponseWriter, r *http.Request) {
       }else if d[i]=="d"{p[u]["x"]++}
     }
     */
-    tmp_px:=p[init_order[u-1]]["x"]
-    tmp_py:=p[init_order[u-1]]["y"]
+    tmp_px:=p[a]["x"]
+    tmp_py:=p[a]["y"]
     for i:=0; i<len(d); i++{
       if d[i]=="r"{tmp_py++
       }else if d[i]=="l"{tmp_py--
@@ -325,27 +384,27 @@ func MoveServer(w http.ResponseWriter, r *http.Request) {
     if 0<=tmp_px && tmp_px<length && 0<=tmp_py && tmp_py<width {
       if u==1||u==2 {
         if user[tmp_px][tmp_py]==0 || user[tmp_px][tmp_py]==5 {
-          user[p[init_order[u-1]]["x"]][p[init_order[u-1]]["y"]]=5
+          user[p[a]["x"]][p[a]["y"]]=5
         }else{
           fmt.Fprintf(w,"is_panel \n")  // ;;;
           return
         }
       }else{
         if user[tmp_px][tmp_py]==0 || user[tmp_px][tmp_py]==6 {
-          user[p[init_order[u-1]]["x"]][p[init_order[u-1]]["y"]]=6
+          user[p[a]["x"]][p[a]["y"]]=6
         }else{
           fmt.Fprintf(w,"is_panel \n")  // ;;;
           return
         }
       }
-      p[init_order[u-1]]["x"]=tmp_px
-      p[init_order[u-1]]["y"]=tmp_py
+      p[a]["x"]=tmp_px
+      p[a]["y"]=tmp_py
     }else{  // out of field
       fmt.Fprintf(w,"Error \n")  // ;;;
       return
     }
-    user[p[init_order[u-1]]["x"]][p[init_order[u-1]]["y"]]=u
-    pcount[u]++
+    user[p[a]["x"]][p[a]["y"]]=u
+    pcount[a]++
     if(pcount[1]==pcount[2]&&pcount[2]==pcount[3]&&pcount[3]==pcount[4]){
       pcount[0]=pcount[1]
       fmt.Fprintf(w,"%d ",pcount[0])
@@ -625,6 +684,8 @@ func main() {
   //  http.HandleFunc("/start_ret", retServer)
     http.HandleFunc("/show/im_field", retConvPField)
     http.HandleFunc("/show/im_user", retConvUField)
+    http.HandleFunc("/show/pfield", retPointField)
+    http.HandleFunc("/show/ufield", retUserField)
     http.HandleFunc("/move", MoveServer)
     http.HandleFunc("/remove", RemoveServer)
     http.HandleFunc("/show", ShowServer)
