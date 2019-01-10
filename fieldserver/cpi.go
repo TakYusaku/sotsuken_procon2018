@@ -525,9 +525,15 @@ func JudgeServer(w http.ResponseWriter, r *http.Request) { // ;;;
     fmt.Println(r.FormValue("d"))
     //d:=r.FormValue("d")
     d:=strings.Split(r.FormValue("d"), "")
+    a:=0
+    for i:=0; i<4; i++{
+      if (u==init_order[i]){
+        a = i+1
+      }
+    }
 
-    tmp_px:=p[init_order[u-1]]["x"]
-    tmp_py:=p[init_order[u-1]]["y"]
+    tmp_px:=p[a]["x"]
+    tmp_py:=p[a]["y"]
     for i:=0; i<len(d); i++{
       if d[i]=="r"{tmp_py++
       }else if d[i]=="l"{tmp_py--
@@ -559,8 +565,8 @@ func JudgeServer(w http.ResponseWriter, r *http.Request) { // ;;;
       // p[u]["x"]=tmp_px
       // p[u]["y"]=tmp_py
     }else{  // out of field
-      fmt.Fprintf(w,"%d ",p[init_order[u-1]]["y"])  // ;;;
-      fmt.Fprintf(w,"%d",p[init_order[u-1]]["x"])  // ;;;
+      fmt.Fprintf(w,"%d ",p[a]["y"])  // ;;;
+      fmt.Fprintf(w,"%d",p[a]["x"])  // ;;;
       fmt.Fprintf(w,"\n") // ;;;
       fmt.Fprintf(w,"Error \n")  // ;;;
       return
